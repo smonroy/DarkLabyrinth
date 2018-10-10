@@ -1138,6 +1138,7 @@ MonoBehaviour:
     go: {fileID: 258751442}
   - numpadKey: 13
     go: {fileID: 1888364280}
+  modeLabel: {fileID: 574006504}
   mode: 0
 --- !u!4 &1264673034
 Transform:

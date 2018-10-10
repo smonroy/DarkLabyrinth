@@ -2,68 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
-// remplazar por NumpadKey
-public enum KeyId {
-    TopLeft, TopCenter, TopRight,
-    UpLeft, UpCenter, UpRight,
-    MiddleLeft, MiddleCenter, MiddleRight,
-    DownLeft, DownCenter, DownRight,
-    BottomLeft, BottomRight,
-    ExtremeRightBottom, ExtremeRightCenter, ExtremeRightTop, 
-}
-
-public enum KeyType { Ally, TargectedAction, Enemy, Confirmation, ExtraInformation, All, UntargetedAction, Menu}
+using UnityEngine.UI;
 
 
 public class GameController : MonoBehaviour {
 
-
-    public static Dictionary<NumpadKey, KeyType>[] ModeTypes = {
-        new Dictionary<NumpadKey, KeyType> {
-            {NumpadKey.TopKey, KeyType.Menu},
-            {NumpadKey.N1Key, KeyType.Ally},
-            {NumpadKey.N2Key, KeyType.Ally},
-            {NumpadKey.N3Key, KeyType.Ally},
-            {NumpadKey.N4Key, KeyType.TargectedAction},
-            {NumpadKey.N5Key, KeyType.TargectedAction},
-            {NumpadKey.N6Key, KeyType.TargectedAction},
-            {NumpadKey.N7Key, KeyType.Enemy},
-            {NumpadKey.N8Key, KeyType.Enemy},
-            {NumpadKey.N9Key, KeyType.Enemy},
-            {NumpadKey.N0Key, KeyType.UntargetedAction},
-            {NumpadKey.Period, KeyType.UntargetedAction},
-            {NumpadKey.ConfirmationKey, KeyType.Confirmation},
-            {NumpadKey.HelpKey, KeyType.ExtraInformation},
-        }
-    };
-
-    //  TODO: multimode
-    public static KeyType[][] validSequences = {
-        new KeyType[] {KeyType.Ally, KeyType.TargectedAction, KeyType.Enemy, KeyType.Confirmation},
-        new KeyType[] {KeyType.Ally, KeyType.UntargetedAction, KeyType.Confirmation},
-        new KeyType[] {KeyType.ExtraInformation, KeyType.Ally},
-        new KeyType[] {KeyType.ExtraInformation, KeyType.TargectedAction},
-        new KeyType[] {KeyType.ExtraInformation, KeyType.UntargetedAction},
-        new KeyType[] {KeyType.ExtraInformation, KeyType.Enemy},
-        new KeyType[] {KeyType.ExtraInformation, KeyType.Confirmation},
-        new KeyType[] {KeyType.ExtraInformation, KeyType.ExtraInformation},
-        new KeyType[] {KeyType.ExtraInformation, KeyType.Menu},
-        new KeyType[] {KeyType.Ally, KeyType.UntargetedAction, KeyType.Ally, KeyType.Confirmation},
-        new KeyType[] {KeyType.Menu, KeyType.Menu}
-    };
-
+    // game object collection
     [Serializable]
     public struct KeyObjectStructure { public NumpadKey numpadKey; public GameObject go; }
-    public KeyObjectStructure[] keyGameObjects;         // to configure all the key gameobjects
+    public KeyObjectStructure[] keyGameObjects;
 
+    public Text modeLabel;
     public Mode mode;
 
     private Dictionary<NumpadKey, GameObject> keyMap;   // to map numpadKey to GameObject
 
     [Serializable]
-    public struct KeySeqStructure { public NumpadKey numpadKey; public KeyType keyType; }
+    private struct KeySeqStructure { public NumpadKey numpadKey; public KeyType keyType; }
     private Queue<KeySeqStructure> sequence;            // active sequence
+
+    private KeyType[][] validSequences;
+    private Dictionary<NumpadKey, KeyType> keyTypes;
 
 
     // Use this for initialization
@@ -74,12 +33,12 @@ public class GameController : MonoBehaviour {
             keyMap.Add(ko.numpadKey, ko.go);
         }
         sequence = new Queue<KeySeqStructure>();
-        mode = Mode.Battle;
+        ChangeMode(Mode.Battle);
     }
 
     // Update is called once per frame
     void Update () {
-        // numeric keys
+        // numpad numbers
         if (Input.GetKeyDown(KeyCode.Keypad0)) { PressKey(NumpadKey.N0Key); }
         if (Input.GetKeyDown(KeyCode.Keypad1)) { PressKey(NumpadKey.N1Key); }
         if (Input.GetKeyDown(KeyCode.Keypad2)) { PressKey(NumpadKey.N2Key); }
@@ -91,6 +50,19 @@ public class GameController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Keypad8)) { PressKey(NumpadKey.N8Key); }
         if (Input.GetKeyDown(KeyCode.Keypad9)) { PressKey(NumpadKey.N9Key); }
         if (Input.GetKeyDown(KeyCode.KeypadPeriod)) { PressKey(NumpadKey.Period); }
+
+        // Alpha numbers
+        if (Input.GetKeyDown(KeyCode.Alpha0)) { PressKey(NumpadKey.N0Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha1)) { PressKey(NumpadKey.N1Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha2)) { PressKey(NumpadKey.N2Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha3)) { PressKey(NumpadKey.N3Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha4)) { PressKey(NumpadKey.N4Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha5)) { PressKey(NumpadKey.N5Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha6)) { PressKey(NumpadKey.N6Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha7)) { PressKey(NumpadKey.N7Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha8)) { PressKey(NumpadKey.N8Key); }
+        if (Input.GetKeyDown(KeyCode.Alpha9)) { PressKey(NumpadKey.N9Key); }
+        if (Input.GetKeyDown(KeyCode.Period)) { PressKey(NumpadKey.Period); }
 
         // confirmation key
         if (Input.GetKeyDown(KeyCode.KeypadEnter)) { PressKey(NumpadKey.ConfirmationKey); }
@@ -108,24 +80,42 @@ public class GameController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Numlock)) { PressKey(NumpadKey.TopKey); }
     }
 
-    private void PressKey(NumpadKey numpadKey) {
-        KeySeqStructure seqStep = new KeySeqStructure();
-        seqStep.numpadKey = numpadKey;
-        seqStep.keyType = ModeTypes[(int)mode][numpadKey];
+    public void ChangeMode(Mode mode) {
+        this.mode = mode;
+        validSequences = KeyboardConfiguration.GetValidSequences(mode);
+        keyTypes = KeyboardConfiguration.GetKeyTypes(mode);
+        switch (mode) {
+            case Mode.Battle:
+                modeLabel.text = "Battle Mode";
+                break;
+            case Mode.Menu:
+                modeLabel.text = "Menu Mode";
+                break;
+            case Mode.Path:
+                modeLabel.text = "Path Selection Mode";
+                break;
+        }
+    }
 
-        sequence.Enqueue(seqStep);
+    private void PressKey(NumpadKey numpadKey) {
+        KeySeqStructure seqStep = new KeySeqStructure(); // for a new sequence step
+        seqStep.numpadKey = numpadKey;
+        seqStep.keyType = keyTypes[numpadKey];
+
+        sequence.Enqueue(seqStep);  // add the new step to the current sequece
         bool complete;
         if (IsSequenceValid(out complete))
-        { // check the sequence adding the new key
+        { 
             keyMap[numpadKey].GetComponent<KeyController>().PressDown(!complete);
         }
         else
         {
-            ReleaseAllKeys();
+            ReleaseAllKeys();   // delete the current sequence
             sequence.Enqueue(seqStep);
-            bool valid = IsSequenceValid(out complete); // new check only the new key as a new sequence
+            bool valid = IsSequenceValid(out complete);
             keyMap[numpadKey].GetComponent<KeyController>().PressDown(valid && !complete);
         }
+
         if (complete)
         {
             string cad = "";
@@ -136,6 +126,7 @@ public class GameController : MonoBehaviour {
             Debug.Log(cad);
             ReleaseAllKeys();
         }
+
     }
 
     bool IsSequenceValid(out bool complete) {
