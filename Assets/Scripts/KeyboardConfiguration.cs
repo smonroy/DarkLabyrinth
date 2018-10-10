@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public static class KeyboardConfiguration {
 
@@ -9,7 +10,7 @@ public static class KeyboardConfiguration {
         switch (mode)
         {
             case Mode.Battle:
-                Dictionary<NumpadKey, KeyType> keyTypes = new Dictionary<NumpadKey, KeyType> {
+                Dictionary<NumpadKey, KeyType> battleTypes = new Dictionary<NumpadKey, KeyType> {
                     {NumpadKey.TopKey, KeyType.Menu},
                     {NumpadKey.N1Key, KeyType.Ally},
                     {NumpadKey.N2Key, KeyType.Ally},
@@ -25,16 +26,24 @@ public static class KeyboardConfiguration {
                     {NumpadKey.ConfirmationKey, KeyType.Confirmation},
                     {NumpadKey.HelpKey, KeyType.ExtraInformation}
                 };
-                return keyTypes;
+                return battleTypes;
+            case Mode.Menu:
+                Dictionary<NumpadKey, KeyType> menuTypes = new Dictionary<NumpadKey, KeyType> {
+                    {NumpadKey.N1Key, KeyType.StartNewGame},
+                    {NumpadKey.ConfirmationKey, KeyType.Confirmation},
+                };
+                return menuTypes;
         }
         return null;
     }
 
     public static KeyType[][] GetValidSequences(Mode mode) {
+
         switch (mode)
         {
             case Mode.Battle:
-                KeyType[][] validSequences = {
+                KeyType[][] battleSequences = {
+                    new KeyType[] {KeyType.Menu, KeyType.Menu},
                     new KeyType[] {KeyType.Ally, KeyType.TargectedAction, KeyType.Enemy, KeyType.Confirmation},
                     new KeyType[] {KeyType.Ally, KeyType.UntargetedAction, KeyType.Confirmation},
                     new KeyType[] {KeyType.ExtraInformation, KeyType.Ally},
@@ -44,12 +53,46 @@ public static class KeyboardConfiguration {
                     new KeyType[] {KeyType.ExtraInformation, KeyType.Confirmation},
                     new KeyType[] {KeyType.ExtraInformation, KeyType.ExtraInformation},
                     new KeyType[] {KeyType.ExtraInformation, KeyType.Menu},
-                    new KeyType[] {KeyType.Ally, KeyType.UntargetedAction, KeyType.Ally, KeyType.Confirmation},
-                    new KeyType[] {KeyType.Menu, KeyType.Menu}
                 };
-                return validSequences;
+                return battleSequences;
+            case Mode.Menu:
+                KeyType[][] menuSequences = {
+                    new KeyType[] {KeyType.StartNewGame, KeyType.Confirmation},
+                };
+                return menuSequences;
+
         }
         return null;
 
     }
+
+    public static GameActions[] GetActions(Mode mode) {
+
+        switch (mode)
+        {
+            case Mode.Battle:
+                GameActions[] battleActions = { 
+                    GameActions.GoToMenuMode,
+                    GameActions.AttackEnemy,
+                    GameActions.UntargetAction,
+                    GameActions.GetExtraInformation,
+                    GameActions.GetExtraInformation,
+                    GameActions.GetExtraInformation,
+                    GameActions.GetExtraInformation,
+                    GameActions.GetExtraInformation,
+                    GameActions.GetExtraInformation,
+                    GameActions.GetExtraInformation,
+                };
+                return battleActions;
+            case Mode.Menu:
+                GameActions[] menuActions = {
+                    GameActions.GoToBattleMode,
+                };
+                return menuActions;
+
+        }
+        return null;
+
+    }
+
 }

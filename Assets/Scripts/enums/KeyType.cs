@@ -5,5 +5,6 @@
     Enemy,
     Confirmation, 
     ExtraInformation, 
-    Menu 
+    Menu, 
+    StartNewGame,
 }

@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour {
 
     public Text modeLabel;
     public Mode mode;
+    public GameActions gameAction;
 
     private Dictionary<NumpadKey, GameObject> keyMap;   // to map numpadKey to GameObject
 
@@ -22,6 +23,7 @@ public class GameController : MonoBehaviour {
     private Queue<KeySeqStructure> sequence;            // active sequence
 
     private KeyType[][] validSequences;
+    private GameActions[] gamesActions;
     private Dictionary<NumpadKey, KeyType> keyTypes;
 
 
@@ -82,8 +84,6 @@ public class GameController : MonoBehaviour {
 
     public void ChangeMode(Mode mode) {
         this.mode = mode;
-        validSequences = KeyboardConfiguration.GetValidSequences(mode);
-        keyTypes = KeyboardConfiguration.GetKeyTypes(mode);
         switch (mode) {
             case Mode.Battle:
                 modeLabel.text = "Battle Mode";
@@ -95,51 +95,72 @@ public class GameController : MonoBehaviour {
                 modeLabel.text = "Path Selection Mode";
                 break;
         }
+        validSequences = KeyboardConfiguration.GetValidSequences(mode);
+        keyTypes = KeyboardConfiguration.GetKeyTypes(mode);
+        gamesActions = KeyboardConfiguration.GetActions(mode);
     }
 
     private void PressKey(NumpadKey numpadKey) {
-        KeySeqStructure seqStep = new KeySeqStructure(); // for a new sequence step
-        seqStep.numpadKey = numpadKey;
-        seqStep.keyType = keyTypes[numpadKey];
-
-        sequence.Enqueue(seqStep);  // add the new step to the current sequece
-        bool complete;
-        if (IsSequenceValid(out complete))
-        { 
-            keyMap[numpadKey].GetComponent<KeyController>().PressDown(!complete);
-        }
-        else
+        if (keyTypes.ContainsKey(numpadKey))
         {
-            ReleaseAllKeys();   // delete the current sequence
-            sequence.Enqueue(seqStep);
-            bool valid = IsSequenceValid(out complete);
-            keyMap[numpadKey].GetComponent<KeyController>().PressDown(valid && !complete);
-        }
+            KeySeqStructure seqStep = new KeySeqStructure(); // for a new sequence step
+            seqStep.numpadKey = numpadKey;
+            seqStep.keyType = keyTypes[numpadKey];
 
-        if (complete)
-        {
-            string cad = "";
-            foreach (KeySeqStructure ks in sequence)
+            sequence.Enqueue(seqStep);  // add the new step to the current sequece
+            bool complete;
+            if (IsSequenceValid(out complete))
             {
-                cad += ks.numpadKey.ToString() + " (" + ks.keyType.ToString() + "), ";
+                keyMap[numpadKey].GetComponent<KeyController>().PressDown(!complete);
             }
-            Debug.Log(cad);
-            ReleaseAllKeys();
-        }
+            else
+            {
+                ReleaseAllKeys();   // delete the current sequence
+                sequence.Enqueue(seqStep);
+                bool valid = IsSequenceValid(out complete);
+                keyMap[numpadKey].GetComponent<KeyController>().PressDown(valid && !complete);
+            }
 
+            if (complete)
+            {
+                DoAction();
+                /*
+                string cad = "";
+                foreach (KeySeqStructure ks in sequence)
+                {
+                    cad += ks.numpadKey.ToString() + " (" + ks.keyType.ToString() + "), ";
+                }
+                Debug.Log(cad);
+                */
+                ReleaseAllKeys();
+            }
+        }
+    }
+
+    void DoAction() {
+        Debug.Log(gameAction);
+        switch (gameAction) {
+            case GameActions.GoToMenuMode:
+                ChangeMode(Mode.Menu);
+                break;
+            case GameActions.GoToBattleMode:
+                ChangeMode(Mode.Battle);
+                break;
+        }
     }
 
     bool IsSequenceValid(out bool complete) {
         complete = false;
-        foreach (KeyType[] seq in validSequences) {
+        for (int j = 0; j < validSequences.Length; j++) {
             int i;
-            for(i = 0; i < sequence.Count && i < seq.Length; i++) {
-                if(sequence.ToArray()[i].keyType != seq[i]) {
+            for(i = 0; i < sequence.Count && i < validSequences[j].Length; i++) {
+                if(sequence.ToArray()[i].keyType != validSequences[j][i]) {
                     break;
                 }
             }
             if(i == sequence.Count) { // is valid
-                complete = (seq.Length == sequence.Count); // is complete
+                gameAction = gamesActions[j];
+                complete = (validSequences[j].Length == sequence.Count); // is complete
                 return true;
             }
         }
