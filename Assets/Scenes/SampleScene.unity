@@ -628,7 +628,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Mode:1
+  m_Text: 'Mode:'
 --- !u!222 &574006505
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1140,6 +1140,7 @@ MonoBehaviour:
     go: {fileID: 1888364280}
   modeLabel: {fileID: 574006504}
   mode: 0
+  gameAction: 0
 --- !u!4 &1264673034
 Transform:
   m_ObjectHideFlags: 0

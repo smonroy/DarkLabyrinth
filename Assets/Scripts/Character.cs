@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Character {
+    public enum Side { Left, Center, Right, Random };
+
     public readonly string name;
 
     private int maxHealth;
@@ -14,6 +16,7 @@ public class Character {
     private int speed;
     private int currentStamina;
     private int staminaRecovery;
+    private CharacterAction[] actions;
     private List<Modifier> modifiers;
 
     public Character(string name, int health, int attack, int magic, int defense, int speed, int stamina, int staminaRecovery) {
@@ -30,6 +33,17 @@ public class Character {
         this.modifiers = new List<Modifier>();
     }
 
+    public void SetActions(CharacterAction[] characterActions) {
+        this.actions = characterActions;
+    }
+
+    public void ApplyAction(Character target, Side side = Side.Random) {
+        if(side == Side.Random) {
+            this.actions[Random.Range(0, this.actions.Length)].Apply(target);
+        } else {
+            this.actions[(int)side].Apply(target);
+        }
+    }
 
     public void AddModifier(ModifierType type, int value, int duration) {
         Modifier modif = modifiers.Find((Modifier obj) => obj.type == type);
