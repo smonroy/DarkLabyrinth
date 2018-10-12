@@ -16,10 +16,10 @@ public class Character {
     private int speed;
     private int currentStamina;
     private int staminaRecovery;
-    private CharacterAction[] actions;
+    public CharacterAction[] actions;
     private List<Modifier> modifiers;
 
-    public Character(string name, int health, int attack, int magic, int defense, int speed, int stamina, int staminaRecovery) {
+    public Character(string name, int health, int attack, int magic, int defense, int speed) {
         this.name = name;
         this.maxHealth = health;
         this.currentHealth = health;
@@ -27,10 +27,30 @@ public class Character {
         this.magic = magic;
         this.defense = defense;
         this.speed = speed;
+        this.maxStamina = 999;
+        this.currentStamina = 999;
+        this.staminaRecovery = 999;
+        this.modifiers = new List<Modifier>();
+    }
+
+    public Character(string name, int health, int attack, int magic, int defense, int speed, int stamina, int staminaRecovery) 
+        : this (name, health, attack, magic, defense, speed) {
+
         this.maxStamina = stamina;
         this.currentStamina = stamina;
         this.staminaRecovery = staminaRecovery;
-        this.modifiers = new List<Modifier>();
+    }
+
+    public string GetToast() {
+        return name + ", health: " + currentHealth + (currentStamina >= 888 ? "" : ", stamina: " + currentStamina);
+    }
+
+    public string GetActionToast(Side side = Side.Random) {
+        int index = (int)side;
+
+        if (side == Side.Random) { Random.Range(0, this.actions.Length); }
+
+        return actions[index].name;
     }
 
     public void SetActions(CharacterAction[] characterActions) {

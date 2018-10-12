@@ -18,13 +18,16 @@ public class GameController : MonoBehaviour {
 
     private Dictionary<NumpadKey, GameObject> keyMap;   // to map numpadKey to GameObject
 
-    [Serializable]
-    private struct KeySeqStructure { public NumpadKey numpadKey; public KeyType keyType; }
-    private Queue<KeySeqStructure> sequence;            // active sequence
+    private Queue<NumpadKey> sequenceKeys;
+    private Queue<KeyType> sequenceType;
 
     private KeyType[][] validSequences;
     private GameActions[] gamesActions;
     private Dictionary<NumpadKey, KeyType> keyTypes;
+
+    private int room;
+    private Character[] allies;
+    private Battle battle;
 
 
     // Use this for initialization
@@ -34,7 +37,11 @@ public class GameController : MonoBehaviour {
         {
             keyMap.Add(ko.numpadKey, ko.go);
         }
-        sequence = new Queue<KeySeqStructure>();
+        sequenceKeys = new Queue<NumpadKey>();
+        sequenceType = new Queue<KeyType>();
+        room = 1;
+        allies = new Character[3];
+        allies[0] = LevelsConfiguration.GetNewAlly(this.room);
         ChangeMode(Mode.Battle);
     }
 
@@ -87,6 +94,7 @@ public class GameController : MonoBehaviour {
         switch (mode) {
             case Mode.Battle:
                 modeLabel.text = "Battle Mode";
+                battle = new Battle(this.room, this.allies);
                 break;
             case Mode.Menu:
                 modeLabel.text = "Menu Mode";
@@ -103,11 +111,9 @@ public class GameController : MonoBehaviour {
     private void PressKey(NumpadKey numpadKey) {
         if (keyTypes.ContainsKey(numpadKey))
         {
-            KeySeqStructure seqStep = new KeySeqStructure(); // for a new sequence step
-            seqStep.numpadKey = numpadKey;
-            seqStep.keyType = keyTypes[numpadKey];
+            sequenceKeys.Enqueue(numpadKey);
+            sequenceType.Enqueue(keyTypes[numpadKey]);
 
-            sequence.Enqueue(seqStep);  // add the new step to the current sequece
             bool complete;
             if (IsSequenceValid(out complete))
             {
@@ -116,7 +122,9 @@ public class GameController : MonoBehaviour {
             else
             {
                 ReleaseAllKeys();   // delete the current sequence
-                sequence.Enqueue(seqStep);
+                sequenceKeys.Enqueue(numpadKey);
+                sequenceType.Enqueue(keyTypes[numpadKey]);
+
                 bool valid = IsSequenceValid(out complete);
                 keyMap[numpadKey].GetComponent<KeyController>().PressDown(valid && !complete);
             }
@@ -124,16 +132,16 @@ public class GameController : MonoBehaviour {
             if (complete)
             {
                 DoAction();
-                /*
-                string cad = "";
-                foreach (KeySeqStructure ks in sequence)
-                {
-                    cad += ks.numpadKey.ToString() + " (" + ks.keyType.ToString() + "), ";
-                }
-                Debug.Log(cad);
-                */
                 ReleaseAllKeys();
+            } else {
+                GetToast();
             }
+        }
+    }
+
+    void GetToast() {
+        if(mode == Mode.Battle) {
+            battle.GetToast(sequenceKeys);
         }
     }
 
@@ -153,14 +161,14 @@ public class GameController : MonoBehaviour {
         complete = false;
         for (int j = 0; j < validSequences.Length; j++) {
             int i;
-            for(i = 0; i < sequence.Count && i < validSequences[j].Length; i++) {
-                if(sequence.ToArray()[i].keyType != validSequences[j][i]) {
+            for(i = 0; i < sequenceType.Count && i < validSequences[j].Length; i++) {
+                if(sequenceType.ToArray()[i] != validSequences[j][i]) {
                     break;
                 }
             }
-            if(i == sequence.Count) { // is valid
+            if(i == sequenceType.Count) { // is valid
                 gameAction = gamesActions[j];
-                complete = (validSequences[j].Length == sequence.Count); // is complete
+                complete = (validSequences[j].Length == sequenceType.Count); // is complete
                 return true;
             }
         }
@@ -168,10 +176,11 @@ public class GameController : MonoBehaviour {
     }
 
     void ReleaseAllKeys(){
-        foreach(KeySeqStructure seqStep in sequence) {
-            keyMap[seqStep.numpadKey].GetComponent<KeyController>().Release();
+        foreach(NumpadKey numpadKey in sequenceKeys) {
+            keyMap[numpadKey].GetComponent<KeyController>().Release();
         }
-        sequence.Clear();
+        sequenceKeys.Clear();
+        sequenceType.Clear();
     }
 
 }
