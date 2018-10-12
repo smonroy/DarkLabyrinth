@@ -591,11 +591,11 @@ RectTransform:
   m_Father: {fileID: 1255796237}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -20}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &574006504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -628,7 +628,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: 'Mode:'
 --- !u!222 &574006505
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1109,78 +1109,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9222c3b8e076e4318b35a0a7818ee921, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyObjects:
-  - keyId: 12
-    go: {fileID: 1902365150}
-  - keyId: 9
-    go: {fileID: 1389318893}
-  - keyId: 10
-    go: {fileID: 425013223}
-  - keyId: 11
-    go: {fileID: 1555946019}
-  - keyId: 6
-    go: {fileID: 735040440}
-  - keyId: 7
-    go: {fileID: 90818335}
-  - keyId: 8
-    go: {fileID: 1807074064}
-  - keyId: 3
-    go: {fileID: 17748331}
-  - keyId: 4
-    go: {fileID: 1877490694}
-  - keyId: 5
-    go: {fileID: 258751442}
-  - keyId: 14
-    go: {fileID: 130554143}
-  - keyId: 13
-    go: {fileID: 1888364280}
-  - keyId: 15
-    go: {fileID: 713677715}
-  - keyId: 1
+  keyGameObjects:
+  - numpadKey: 0
     go: {fileID: 1648042031}
-  keyCodes:
-  - code: 256
-    keyId: 12
-  - code: 257
-    keyId: 9
-  - code: 258
-    keyId: 10
-  - code: 259
-    keyId: 11
-  - code: 260
-    keyId: 6
-  - code: 261
-    keyId: 7
-  - code: 262
-    keyId: 8
-  - code: 263
-    keyId: 3
-  - code: 264
-    keyId: 4
-  - code: 265
-    keyId: 5
-  - code: 266
-    keyId: 13
-  - code: 270
-    keyId: 15
-  - code: 271
-    keyId: 14
-  - code: 13
-    keyId: 14
-  - code: 267
-    keyId: 1
-  - code: 268
-    keyId: 1
-  - code: 9
-    keyId: 1
-  - code: 300
-    keyId: 1
-  - code: 127
-    keyId: 13
-  - code: 269
-    keyId: 15
-  - code: 8
-    keyId: 15
+  - numpadKey: 1
+    go: {fileID: 713677715}
+  - numpadKey: 2
+    go: {fileID: 130554143}
+  - numpadKey: 3
+    go: {fileID: 1902365150}
+  - numpadKey: 4
+    go: {fileID: 1389318893}
+  - numpadKey: 5
+    go: {fileID: 425013223}
+  - numpadKey: 6
+    go: {fileID: 1555946019}
+  - numpadKey: 7
+    go: {fileID: 735040440}
+  - numpadKey: 8
+    go: {fileID: 90818335}
+  - numpadKey: 9
+    go: {fileID: 1807074064}
+  - numpadKey: 10
+    go: {fileID: 17748331}
+  - numpadKey: 11
+    go: {fileID: 1877490694}
+  - numpadKey: 12
+    go: {fileID: 258751442}
+  - numpadKey: 13
+    go: {fileID: 1888364280}
+  modeLabel: {fileID: 574006504}
+  mode: 0
+  gameAction: 0
 --- !u!4 &1264673034
 Transform:
   m_ObjectHideFlags: 0
