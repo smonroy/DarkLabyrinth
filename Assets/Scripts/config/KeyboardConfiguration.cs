@@ -29,10 +29,24 @@ public static class KeyboardConfiguration {
                 return battleTypes;
             case Mode.Menu:
                 Dictionary<NumpadKey, KeyType> menuTypes = new Dictionary<NumpadKey, KeyType> {
-                    {NumpadKey.N1Key, KeyType.StartNewGame},
+                    {NumpadKey.N1Key, KeyType.MenuOptionNewGame},
+                    {NumpadKey.N2Key, KeyType.MenuOptionResumeGame},
                     {NumpadKey.ConfirmationKey, KeyType.Confirmation},
                 };
                 return menuTypes;
+            case Mode.Path:
+                Dictionary<NumpadKey, KeyType> pathTypes = new Dictionary<NumpadKey, KeyType> {
+                    {NumpadKey.TopKey, KeyType.Menu},
+                    {NumpadKey.N1Key, KeyType.Ally},
+                    {NumpadKey.N2Key, KeyType.Ally},
+                    {NumpadKey.N3Key, KeyType.Ally},
+                    {NumpadKey.N7Key, KeyType.RoomSelection},
+                    {NumpadKey.N8Key, KeyType.RoomSelection},
+                    {NumpadKey.N9Key, KeyType.RoomSelection},
+                    {NumpadKey.N5Key, KeyType.Exploration},
+                    {NumpadKey.ConfirmationKey, KeyType.Confirmation},
+                };
+                return pathTypes;
         }
         return null;
     }
@@ -43,7 +57,7 @@ public static class KeyboardConfiguration {
         {
             case Mode.Battle:
                 KeyType[][] battleSequences = {
-                    new KeyType[] {KeyType.Menu, KeyType.Menu},
+                    new KeyType[] {KeyType.Menu, KeyType.Confirmation},
                     new KeyType[] {KeyType.Ally, KeyType.TargectedAction, KeyType.Enemy, KeyType.Confirmation},
                     new KeyType[] {KeyType.Ally, KeyType.UntargetedAction, KeyType.Confirmation},
                     new KeyType[] {KeyType.ExtraInformation, KeyType.Ally},
@@ -57,9 +71,18 @@ public static class KeyboardConfiguration {
                 return battleSequences;
             case Mode.Menu:
                 KeyType[][] menuSequences = {
-                    new KeyType[] {KeyType.StartNewGame, KeyType.Confirmation},
+                    new KeyType[] {KeyType.MenuOptionNewGame, KeyType.Confirmation},
+                    new KeyType[] {KeyType.MenuOptionResumeGame, KeyType.Confirmation},
                 };
                 return menuSequences;
+            case Mode.Path:
+                KeyType[][] pathSequences = {
+                    new KeyType[] {KeyType.Menu, KeyType.Confirmation},
+                    new KeyType[] {KeyType.RoomSelection, KeyType.Confirmation},
+                    new KeyType[] {KeyType.Exploration},
+                    new KeyType[] {KeyType.Ally}
+                };
+                return pathSequences;
 
         }
         return null;
@@ -72,7 +95,7 @@ public static class KeyboardConfiguration {
         {
             case Mode.Battle:
                 GameActions[] battleActions = { 
-                    GameActions.GoToMenuMode,
+                    GameActions.GoToMenu,
                     GameActions.AttackEnemy,
                     GameActions.UntargetAction,
                     GameActions.GetExtraInformation,
@@ -86,9 +109,18 @@ public static class KeyboardConfiguration {
                 return battleActions;
             case Mode.Menu:
                 GameActions[] menuActions = {
-                    GameActions.GoToBattleMode,
+                    GameActions.NewGame,
+                    GameActions.ResumeGame
                 };
                 return menuActions;
+            case Mode.Path:
+                GameActions[] pathActions = {
+                    GameActions.GoToMenu,
+                    GameActions.EnterNewBattleRoom,
+                    GameActions.NoAction,
+                    GameActions.NoAction
+                };
+                return pathActions;
 
         }
         return null;

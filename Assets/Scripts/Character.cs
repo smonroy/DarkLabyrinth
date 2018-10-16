@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Character {
     public enum Side { Left, Center, Right, Random };
-
     public readonly string name;
+    public CharacterAction[] actions;
+    public bool isAlly;
+    public bool moved;
 
     private int maxHealth;
     private int maxStamina;
@@ -16,7 +18,6 @@ public class Character {
     private int speed;
     private int currentStamina;
     private int staminaRecovery;
-    public CharacterAction[] actions;
     private List<Modifier> modifiers;
 
     public Character(string name, int health, int attack, int magic, int defense, int speed) {
@@ -27,42 +28,42 @@ public class Character {
         this.magic = magic;
         this.defense = defense;
         this.speed = speed;
-        this.maxStamina = 999;
-        this.currentStamina = 999;
-        this.staminaRecovery = 999;
+        this.isAlly = false;
+        this.maxStamina = -1;
+        this.currentStamina = -1;
+        this.staminaRecovery = 0;
         this.modifiers = new List<Modifier>();
+        this.moved = false;
     }
 
     public Character(string name, int health, int attack, int magic, int defense, int speed, int stamina, int staminaRecovery) 
         : this (name, health, attack, magic, defense, speed) {
-
+        this.isAlly = true;
         this.maxStamina = stamina;
         this.currentStamina = stamina;
         this.staminaRecovery = staminaRecovery;
     }
 
-    public string GetToast() {
-        return name + ", health: " + currentHealth + (currentStamina >= 888 ? "" : ", stamina: " + currentStamina);
-    }
-
-    public string GetActionToast(Side side = Side.Random) {
-        int index = (int)side;
-
-        if (side == Side.Random) { Random.Range(0, this.actions.Length); }
-
-        return actions[index].name;
+    public void GetToast(string previous = "") {
+        if(IsDead()) {
+            Debug.Log(previous + name + " is dead");
+        } else {
+            Debug.Log(previous + name + ", health: " + currentHealth + (currentStamina < 0 ? "" : ", stamina: " + currentStamina));
+        }
     }
 
     public void SetActions(CharacterAction[] characterActions) {
         this.actions = characterActions;
+        foreach(CharacterAction action in characterActions) {
+            action.owner = this;
+        }
     }
 
-    public void ApplyAction(Character target, Side side = Side.Random) {
-        if(side == Side.Random) {
-            this.actions[Random.Range(0, this.actions.Length)].Apply(target);
-        } else {
-            this.actions[(int)side].Apply(target);
-        }
+    public void SetAction(CharacterAction characterAction)
+    {
+        this.actions = new CharacterAction[1];
+        actions[0] = characterAction;
+        actions[0].owner = this;
     }
 
     public void AddModifier(ModifierType type, int value, int duration) {
@@ -115,6 +116,10 @@ public class Character {
         return this.currentHealth;
     }
 
+    public int GetStamina() {
+        return maxStamina == -1 ? 9999 : currentStamina;
+    }
+
     public int GetAttack() {
         return Mathf.Max(0, attack
                          + GetModifierValue(ModifierType.AttackUp)
@@ -150,20 +155,28 @@ public class Character {
                          - GetModifierValue(ModifierType.StaminaRegenDwon));
     }
 
-    public void ReduceStamina(int expendStamina) {
-        currentStamina = Mathf.Max(0, currentStamina -= expendStamina);
+    public int ReduceStamina(int expendStamina) {
+        int previousStamina = currentStamina;
+        if(maxStamina != -1) {
+            currentStamina = Mathf.Max(0, currentStamina -= expendStamina);
+        }
+        return currentStamina - previousStamina;
     }
 
     public void RecoverStamina() {
-        currentStamina = Mathf.Min(maxStamina, currentStamina += GetStaminaRecovery());
+        if (maxStamina != -1) {
+            currentStamina = Mathf.Min(maxStamina, currentStamina += GetStaminaRecovery());
+        }
     }
 
     public void ResetStamina() {
         currentStamina = maxStamina;
     }
 
-    public void ReduceHealth(int healthLess) {
+    public int ReduceHealth(int healthLess) {
+        int previousHealth = currentHealth;
         currentHealth = Mathf.Max(0, this.currentHealth -= healthLess);
+        return currentHealth - previousHealth;
     }
 
     public void RecoverHealth(int healthRecovered) {
@@ -179,7 +192,22 @@ public class Character {
     }
 
     public bool IsDead() {
-        return currentHealth == 0;
+        return currentHealth <= 0;
+    }
+
+    public static Character GetRandomCharacter(Character[] group)
+    {
+        int i = Random.Range(0, group.Length) + group.Length;
+        int incr = (Random.Range(0, 2) * 2) - 1; // +1 or -1
+        int limit = 3;
+        Character selected = group[i % group.Length];
+        while ((selected == null || selected.IsDead()) && limit > 0)
+        {
+            limit--;
+            i += incr;
+            selected = group[i % group.Length];
+        }
+        return selected;
     }
 
 }

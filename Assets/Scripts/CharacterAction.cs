@@ -10,6 +10,7 @@ public class CharacterAction {
     public EffectType effectType;
     public ModifierType modifier;
     public int modifierTurns;
+    public Character owner;
 
     public CharacterAction(string name, int cost, int range, int effect, EffectType effectType) {
         this.name = name;
@@ -24,8 +25,31 @@ public class CharacterAction {
         this.modifierTurns = turns;
     }
 
-    public void Apply(Character target) {
-        // todo complete it
+    public bool Use(Character target) {
+        if (!owner.moved) {
+            if (owner.GetStamina() >= staminaCost) {
+                int healthLost = target.ReduceHealth(effect);
+                int staminaLost = owner.ReduceStamina(staminaCost);
+                owner.moved = owner.isAlly;
+                Debug.Log(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points" + 
+                          (owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina points" : ""));
+                if (target.IsDead()) {
+                    Debug.Log(target.name + " is dead");
+                }
+                return true;
+            }
+            else {
+                Debug.Log(owner.name + " can not attack because doesn't have enough stamina, current stamina: " + owner.GetStamina() + ", required stamina: " + staminaCost);
+            }
+        }
+        else {
+            Debug.Log(owner.name + " already has moved this turn.");
+        }
+        return false;
+    }
+
+    public void GetToast() {
+        Debug.Log(name + " effect: " + effect + ", stamina cost: " + staminaCost);
     }
 
 }

@@ -6,5 +6,8 @@
     Confirmation, 
     ExtraInformation, 
     Menu, 
-    StartNewGame,
+    MenuOptionNewGame,
+    MenuOptionResumeGame,
+    RoomSelection,
+    Exploration,
 }
