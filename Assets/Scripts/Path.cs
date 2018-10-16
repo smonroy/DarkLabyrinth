@@ -10,7 +10,7 @@ public class Path {
 
     public Path(int level, Character[] allies) {
         this.level = level;
-        this.allies = allies;
+        this.allies = LevelsConfiguration.UpdateAllies(allies, this.level);
         this.rooms = LevelsConfiguration.GetRooms(level);
     }
 

@@ -44,6 +44,15 @@ public class Character {
         this.staminaRecovery = staminaRecovery;
     }
 
+    public void IncreaseStatsRandomly(int health, int attack, int magic, int defense, int speed) {
+        this.maxHealth += Random.Range(0, health + 1);
+        this.currentHealth += Random.Range(0, health + 1);
+        this.attack += Random.Range(0, attack + 1);
+        this.magic += Random.Range(0, magic + 1);
+        this.defense += Random.Range(0, defense + 1);
+        this.speed += Random.Range(0, speed + 1);
+    }
+
     public void GetToast(string previous = "") {
         if(IsDead()) {
             Debug.Log(previous + name + " is dead");
@@ -55,7 +64,9 @@ public class Character {
     public void SetActions(CharacterAction[] characterActions) {
         this.actions = characterActions;
         foreach(CharacterAction action in characterActions) {
-            action.owner = this;
+            if(action != null) {
+                action.owner = this;
+            }
         }
     }
 
@@ -179,7 +190,10 @@ public class Character {
         return currentHealth - previousHealth;
     }
 
-    public void RecoverHealth(int healthRecovered) {
+    public void RecoverHealth(int healthRecovered = 0) {
+        if(healthRecovered == 0) {
+            healthRecovered = Random.Range(0, 3);
+        }
         currentHealth = Mathf.Min(maxHealth, currentHealth += healthRecovered);
     }
 

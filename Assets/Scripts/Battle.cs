@@ -9,16 +9,6 @@ public class Battle {
 
     private Character lastAllyToasted;
 
-    private void ResetAllies() {
-        foreach(Character ally in allies) {
-            if(ally != null) {
-                ally.moved = false;
-                ally.ResetStamina();
-                ally.ResetHealth();
-            }
-        }
-
-    }
 
     public Battle(Character[] allies, Character[] enemies) {
         this.allies = allies;
@@ -46,6 +36,7 @@ public class Battle {
             if (TeamNothingToDo(allies)) {
                 ResetAlliesMoved();
                 EnemiesTurn();
+                RecoverAllies();
             }
         }
     }
@@ -61,6 +52,7 @@ public class Battle {
                 }
             }
         }
+        
     }
 
     private bool TeamNothingToDo(Character[] team) {
@@ -85,10 +77,29 @@ public class Battle {
         return true;
     }
 
+    public void ResetAllies() {
+        foreach (Character ally in allies) {
+            if (ally != null) {
+                ally.moved = false;
+                ally.ResetStamina();
+                ally.ResetHealth();
+            }
+        }
+    }
+
     private void ResetAlliesMoved() {
         foreach (Character ally in allies) {
             if(ally != null && ally.moved) {
                 ally.moved = false;
+            }
+        }
+    }
+
+    public void RecoverAllies() {
+        foreach (Character ally in allies) {
+            if (ally != null) {
+                ally.RecoverStamina();
+                ally.RecoverHealth();
             }
         }
     }

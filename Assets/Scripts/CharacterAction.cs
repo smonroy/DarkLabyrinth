@@ -26,26 +26,29 @@ public class CharacterAction {
     }
 
     public bool Use(Character target) {
-        if (!owner.moved) {
-            if (owner.GetStamina() >= staminaCost) {
-                int healthLost = target.ReduceHealth(effect);
-                int staminaLost = owner.ReduceStamina(staminaCost);
-                owner.moved = owner.isAlly;
-                Debug.Log(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points" + 
-                          (owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina points" : ""));
-                if (target.IsDead()) {
-                    Debug.Log(target.name + " is dead");
-                }
-                return true;
-            }
-            else {
-                Debug.Log(owner.name + " can not attack because doesn't have enough stamina, current stamina: " + owner.GetStamina() + ", required stamina: " + staminaCost);
-            }
+        if (target.IsDead()) {
+            Debug.Log("Imposible attack because " + target.name + " is dead");
+            return false;
         }
-        else {
-            Debug.Log(owner.name + " already has moved this turn.");
+        if (owner.moved){
+            Debug.Log("Imposible attack because " + owner.name + " already has moved this turn.");
+            return false;
         }
-        return false;
+        if (owner.GetStamina() < staminaCost) {
+            Debug.Log("Imposible attack because " + owner.name + " doesn't have enough stamina, current stamina: " + owner.GetStamina() + ", required stamina: " + staminaCost);
+            return false;
+        }
+
+        int healthLost = target.ReduceHealth(effect);
+        int staminaLost = owner.ReduceStamina(staminaCost);
+        owner.moved = owner.isAlly;
+        Debug.Log(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points, current health is: " + target.GetHealth() + 
+                  (owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina points" : ""));
+        if (target.IsDead()) {
+            Debug.Log(target.name + " is dead");
+        }
+
+        return true;
     }
 
     public void GetToast() {

@@ -190,7 +190,6 @@ public class GameController : MonoBehaviour {
                 Debug.Log("You are started a new game");
                 level = 1;
                 allies = new Character[3];
-                allies[0] = LevelsConfiguration.GetNewAlly(this.level);
                 path = new Path(this.level, allies);
                 ChangeMode(Mode.Path);
                 break;
@@ -211,7 +210,8 @@ public class GameController : MonoBehaviour {
                     Debug.Log("You lost");
                     menu.previousMode = Mode.Menu; // No game resume any more
                     ChangeMode(Mode.Menu);
-                }
+                    return;
+                } 
                 if (battle.isTeamDied(battle.enemies)) {
                     Debug.Log("All the enemies are defeated!");
                     this.allies = battle.allies;
@@ -220,8 +220,10 @@ public class GameController : MonoBehaviour {
                         path = new Path(this.level, this.allies);
                     }
                     else {
+                        roomSelected.Explore();
                         Debug.Log("There is no exit in this path, you need to return to the same level");
                     }
+                    battle.ResetAllies();
                     ChangeMode(Mode.Path);
                 }
                 break;
