@@ -1,7 +1,8 @@
 ﻿public enum KeyType { 
     Ally, 
-    TargectedAction,
-    UntargetedAction, 
+    CharacterAction,
+    DeffendAction,
+    RecoveringAction,
     Enemy,
     Confirmation, 
     ExtraInformation, 

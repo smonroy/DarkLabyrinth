@@ -9,7 +9,8 @@
     EnterNewBattleRoom,
     // Battle actions
     AttackEnemy,
-    UntargetAction,      // not implemented yet
+    DeffendAllies,
+    Recovering,
     GetExtraInformation, // not implemented yet
     // Default
     NoAction,
