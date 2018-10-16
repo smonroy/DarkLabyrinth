@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour {
     public AudioSource musicAudioSource;
 
     AudioSource source;
-    Queue<AudioClip> audioQueue;
+    Queue<string> audioQueue;
     AudioPosition position;
 
     public AudioPosition Position {
@@ -58,16 +58,46 @@ public class AudioManager : MonoBehaviour {
 
     void Start() {
         Load();
-        audioQueue = new Queue<AudioClip>();
+        audioQueue = new Queue<string>();
         StartCoroutine(PlayQueue());
     }
 
-    IEnumerator PlaySequenceCoroutine(string[] clips, AudioPosition position) {
-        foreach (string clip in clips) {
-            source.clip = SoundBank.GetSound(clip);
-            if (source.clip != null)
-                source.Play();
-            while (source.isPlaying) yield return null;
+    IEnumerator PlayQueue() {
+        while (true) {
+            while (audioQueue.Count != 0 || source.isPlaying) {
+                if (!source.isPlaying) {
+                    string nextSound = audioQueue.Dequeue();
+                    switch (nextSound) {
+                        case "front":
+                            source.Stop();
+                            source = frontAudioSource;
+                            nextSound = audioQueue.Dequeue();
+                            break;
+                        case "left":
+                            source.Stop();
+                            source = leftAudioSource;
+                            nextSound = audioQueue.Dequeue();
+                            break;
+                        case "right":
+                            source.Stop();
+                            source = rightAudioSource;
+                            nextSound = audioQueue.Dequeue();
+                            break;
+                        case "center":
+                            source.Stop();
+                            source = centerAudioSource;
+                            nextSound = audioQueue.Dequeue();
+                            break;
+                        default:
+                            break;
+                    }
+                    source.clip = SoundBank.GetSound(nextSound);
+                    source.Play();
+                    yield return new WaitForSeconds(source.clip.length);
+                }
+                yield return null;
+            }
+            yield return null;
         }
     }
 
@@ -83,13 +113,12 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
-    void QueuePlay(string clips, AudioPosition pos, bool interrrupt = false) {
+    void QueuePlay(string clips, AudioPosition pos, bool interrupt = false) {
         Position = pos;
-
-
+        if (interrupt) audioQueue.Clear();
         List<string> playable = new List<string>(clips.Split(','));
         foreach (string s in playable) SplitSpaces(s);
-        audioQueue.Enqueue(SoundBank.GetSound("space"));
+        audioQueue.Enqueue("space");
     }
 
     void SplitSpaces(string s) {
@@ -100,16 +129,16 @@ public class AudioManager : MonoBehaviour {
                 ReadNumbers(val);
             }
             else {
-                audioQueue.Enqueue(SoundBank.GetSound(s1));
-                audioQueue.Enqueue(SoundBank.GetSound("space"));
+                audioQueue.Enqueue(s1);
+                audioQueue.Enqueue("space");
             }
         }
-        audioQueue.Enqueue(SoundBank.GetSound("space"));
+        audioQueue.Enqueue("space");
     }
 
     void ReadNumbers(int val) {
         if (val <= 20) {
-            audioQueue.Enqueue(SoundBank.GetSound(val.ToString()));
+            audioQueue.Enqueue(val.ToString());
         }
         else {
             string valstring = val.ToString();
@@ -118,24 +147,21 @@ public class AudioManager : MonoBehaviour {
                 string hundreds = valstring.Substring(0, 1) + "00";
                 tens = valstring.Substring(1, 1) + "0";
                 units = valstring.Substring(2, 1);
-                audioQueue.Enqueue(SoundBank.GetSound(hundreds));
+                audioQueue.Enqueue(hundreds);
             }
             else {
                 tens = valstring.Substring(0, 1) + "0";
                 units = valstring.Substring(1, 1);
             }
-            audioQueue.Enqueue(SoundBank.GetSound(tens));
-            audioQueue.Enqueue(SoundBank.GetSound(units));
+            audioQueue.Enqueue(tens);
+            audioQueue.Enqueue(units);
         }
-        audioQueue.Enqueue(SoundBank.GetSound("space"));
+        audioQueue.Enqueue("space");
     }
 
-    void PlaySound(string clip, AudioPosition position = AudioPosition.Center) {
-        string[] clipArray = {clip};
-    }
 
     void Interrupt() {
-        StopCoroutine("PlaySequenceCoroutine");
+        StopCoroutine("PlayQueue");
         source.Stop();
     }
 
