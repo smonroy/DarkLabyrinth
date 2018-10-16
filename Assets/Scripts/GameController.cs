@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
+    AudioManager audioManager;
+
     // game object collection
     [Serializable]
     public struct KeyObjectStructure { public NumpadKey numpadKey; public GameObject go; }
@@ -15,14 +17,14 @@ public class GameController : MonoBehaviour {
     public Text modeLabel;
     public Mode mode;
 
-    private Dictionary<NumpadKey, GameObject> keyMap;   // to map numpadKey to GameObject
+    Dictionary<NumpadKey, GameObject> keyMap;   // to map numpadKey to GameObject
 
-    private Queue<NumpadKey> sequenceKeys;
-    private Queue<KeyType> sequenceType;
+    Queue<NumpadKey> sequenceKeys;
+    Queue<KeyType> sequenceType;
 
-    private KeyType[][] validSequences;
-    private GameActions[] gamesActions;
-    private Dictionary<NumpadKey, KeyType> keyTypes;
+    KeyType[][] validSequences;
+    GameActions[] gamesActions;
+    Dictionary<NumpadKey, KeyType> keyTypes;
 
     private int level;
     private Room roomSelected;
@@ -34,6 +36,8 @@ public class GameController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        audioManager = GameObject.FindGameObjectWithTag("Player").GetComponent<AudioManager>();
+
         keyMap = new Dictionary<NumpadKey, GameObject>();
         foreach (KeyObjectStructure ko in keyGameObjects) {
             keyMap.Add(ko.numpadKey, ko.go);
@@ -102,7 +106,6 @@ public class GameController : MonoBehaviour {
         sequenceKeys.Clear();
         sequenceType.Clear();
     }
-
 
     private void PressKey(NumpadKey numpadKey) {
         if (!keyTypes.ContainsKey(numpadKey)) {
