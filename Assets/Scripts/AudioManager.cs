@@ -1,5 +1,6 @@
 ﻿#region usings
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,43 +19,72 @@ public class AudioManager : MonoBehaviour {
     public AudioSource musicAudioSource;
 
     AudioSource source;
+    Queue<string> audioQueue;
+    AudioPosition lastPositionQueued;
+    AudioPosition position;
+
+    private AudioPosition Position {
+        get { return position; }
+        set {
+            position = value;
+            switch (position) {
+                case AudioPosition.Left:
+                    source = leftAudioSource;
+                    break;
+                case AudioPosition.Center:
+                    source = centerAudioSource;
+                    break;
+                case AudioPosition.Right:
+                    source = rightAudioSource;
+                    break;
+                case AudioPosition.Front:
+                    source = frontAudioSource;
+                    break;
+                default:
+                    source = centerAudioSource;
+                    break;
+            }
+        }
+    }
 
     #endregion
 
-    public void Load() {
+    void Load() {
         SoundBank.LoadAudioDictionary();
-        foreach (KeyValuePair<string, AudioClip> keyValuePair in SoundBank.audioDictionary) {
-            centerAudioSource.clip = keyValuePair.Value;
-            centerAudioSource.Play();
-        }
+        //foreach (KeyValuePair<string, AudioClip> keyValuePair in SoundBank.audioDictionary) {
+        //    centerAudioSource.clip = keyValuePair.Value;
+        //    centerAudioSource.Play();
+        //}
     }
 
-    void Start() {
+    void Awake() {
+        Position = AudioPosition.Center;
+        lastPositionQueued = Position;
         Load();
+        audioQueue = new Queue<string>();
+        StartCoroutine(PlayQueue());
     }
 
-    IEnumerator PlaySequenceCoroutine(string[] clips, AudioPosition position) {
-        switch (position) {
-            case AudioPosition.Left:
-                source = leftAudioSource;
-                break;
-            case AudioPosition.Center:
-                source = centerAudioSource;
-                break;
-            case AudioPosition.Right:
-                source = rightAudioSource;
-                break;
-            case AudioPosition.Front:
-                source = frontAudioSource;
-                break;
-            default:
-                source = centerAudioSource;
-                break;
-        }
-        foreach (string clip in clips) {
-            source.clip = SoundBank.audioDictionary[clip];
-            source.Play();
-            while (source.isPlaying) yield return null;
+    IEnumerator PlayQueue() {
+        while (true) {
+            if (audioQueue.Count != 0 && !source.isPlaying) {
+                string nextSound = audioQueue.Dequeue();
+                switch (nextSound) {
+                    case "[front]": Position = AudioPosition.Front; break;
+                    case "[left]": Position = AudioPosition.Left; ; break;
+                    case "[right]": Position = AudioPosition.Right; break;
+                    case "[center]": Position = AudioPosition.Center; break;
+                    case "[space]": yield return new WaitForSeconds(0.2f); break;
+                    default:
+                        source.clip = SoundBank.GetSound(nextSound);
+                        if (source.clip != null){
+                            source.Play();
+                            yield return new WaitForSeconds(source.clip.length);
+                        }
+                        break;
+                }
+            }
+            yield return null;
         }
     }
 
@@ -70,17 +100,68 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
-    void PlaySequence(string[] clips, AudioPosition position = AudioPosition.Center) {
-        StartCoroutine(PlaySequenceCoroutine(clips, position));
+    public void Play(string clips, string message = "", bool interrupt = false, AudioPosition pos = AudioPosition.Center) {
+        if(message != "") {
+            Debug.Log(message);
+        } else {
+            Debug.Log(clips.Replace("-", " "));
+        }
+        if (interrupt) Interrupt();
+        if(lastPositionQueued != pos) {
+            switch (pos) {
+                case AudioPosition.Center: audioQueue.Enqueue("[center]"); break;
+                case AudioPosition.Front: audioQueue.Enqueue("[front]"); break;
+                case AudioPosition.Left: audioQueue.Enqueue("[left]"); break;
+                case AudioPosition.Right: audioQueue.Enqueue("[right]"); break;
+            }
+            lastPositionQueued = pos;
+        }
+        List<string> playable = new List<string>(clips.Split(','));
+        foreach (string s in playable) SplitSpaces(s.Trim());
     }
 
-    void PlaySound(string clip, AudioPosition position = AudioPosition.Center) {
-        string[] clipArray = {clip};
+    void SplitSpaces(string s) {
+        List<string> thing = new List<string>(s.Split(' '));
+        foreach (string s1 in thing) {
+            int val;
+            if (Int32.TryParse(s1, out val)) {
+                ReadNumbers(val);
+            }
+            else {
+                audioQueue.Enqueue(s1);
+                audioQueue.Enqueue("[space]");
+            }
+        }
+        audioQueue.Enqueue("[space]");
     }
 
-    void Interrupt() {
-        StopCoroutine("PlaySequenceCoroutine");
+    void ReadNumbers(int val) {
+        string valstring = val.ToString();
+        string tens, units;
+        if (valstring.Length == 3) {
+            string hundreds = valstring.Substring(0, 1) + "00";
+            audioQueue.Enqueue(hundreds);
+            valstring = valstring.Substring(1, 2);
+            val = val % 100;
+        }
+        if (val > 0) {
+            valstring = val.ToString();
+            if (val <= 20) {
+                audioQueue.Enqueue(valstring);
+            } else {
+                tens = valstring.Substring(0, 1) + "0";
+                units = valstring.Substring(1, 1);
+                audioQueue.Enqueue(tens);
+                if (units != "0") {
+                    audioQueue.Enqueue(units);
+                }
+            }
+        }
+        audioQueue.Enqueue("[space]");
+    }
+
+    public void Interrupt() {
+        audioQueue.Clear();
         source.Stop();
     }
-
 }

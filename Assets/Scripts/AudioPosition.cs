@@ -1,4 +1,4 @@
-﻿enum AudioPosition {
+﻿public enum AudioPosition {
 
     Left,
     Center,
