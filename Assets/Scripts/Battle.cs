@@ -8,11 +8,12 @@ public class Battle {
     public Character[] allies;
 
     private Character lastAllyToasted;
+    private AudioManager audioManager;
 
-
-    public Battle(Character[] allies, Character[] enemies) {
+    public Battle(Character[] allies, Character[] enemies, AudioManager audioManager) {
         this.allies = allies;
         this.enemies = enemies;
+        this.audioManager = audioManager;
     }
 
     public void AttackEnemy(NumpadKey[] sequenceKeys) {
@@ -124,6 +125,8 @@ public class Battle {
         if (isEmpty(numpadKey)) {
             Debug.Log("is empty");
         } else {
+            audioManager.QueuePlay("confirm confirm", AudioPosition.Left);
+            audioManager.QueuePlay("heal1", AudioPosition.Right, false);
             switch (numpadKey) {
                 case NumpadKey.TopKey: Debug.Log("Menu option"); break;
                 case NumpadKey.N1Key: newAllyToasted = allies[0]; newAllyToasted.GetToast(); break;

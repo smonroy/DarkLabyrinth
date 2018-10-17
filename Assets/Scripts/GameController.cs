@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
-    AudioManager audioManager;
+    private AudioManager audioManager;
 
     // game object collection
     [Serializable]
@@ -204,7 +204,7 @@ public class GameController : MonoBehaviour {
                 break;
             case GameActions.EnterNewBattleRoom:
                 roomSelected = path.GetRoom(sequenceKeys);
-                battle = new Battle(this.allies, roomSelected.GetEnemies());
+                battle = new Battle(this.allies, roomSelected.GetEnemies(), audioManager);
                 ChangeMode(Mode.Battle);
                 break;
             case GameActions.AttackEnemy:
