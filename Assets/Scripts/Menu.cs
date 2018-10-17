@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Menu {
     public Mode previousMode;
+    private AudioManager audioManager;
 
-    public Menu() {
+    public Menu(AudioManager audioManager) {
         previousMode = Mode.Menu;
+        this.audioManager = audioManager;
     }
 
     public void GetToast(NumpadKey numpadKey)
@@ -14,13 +16,13 @@ public class Menu {
         switch (numpadKey)
         {
             case NumpadKey.N1Key:
-                Debug.Log("New game option");
+                audioManager.Play("new-game-option");
                 break;
             case NumpadKey.N2Key:
                 if(previousMode == Mode.Menu) {
-                    Debug.Log("There is no game to resume");
+                    audioManager.Play("there-is-no-game-to-resume");
                 } else {
-                    Debug.Log("Resume game option");
+                    audioManager.Play("resume-game-option");
                 }
                 break;
         }

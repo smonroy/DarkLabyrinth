@@ -29,11 +29,12 @@ public class Room {
         return this.enemies;
     }
 
-    public void GetToast() {
+    public void GetToast(AudioManager audioManager) {
         if(explored) {
-            Debug.Log("This path have beed already explored");
+            audioManager.Play("this-path-have-beed-already-explored");
         } else {
-            Character.GetRandomCharacter(enemies).GetToast("You peek at this path: ");
+            audioManager.Play("you-peek-at-this-path");
+            Character.GetRandomCharacter(enemies).GetToast(audioManager);
         }
     }
 

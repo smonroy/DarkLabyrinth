@@ -25,34 +25,34 @@ public class CharacterAction {
         this.modifierTurns = turns;
     }
 
-    public bool Use(Character target) {
+    public bool Use(Character target, AudioManager audioManager) {
         if (target.IsDead()) {
-            Debug.Log("Imposible attack because " + target.name + " is dead");
+            audioManager.Play("Imposible-attack-because " + target.name + " is-dead");
             return false;
         }
         if (owner.moved){
-            Debug.Log("Imposible attack because " + owner.name + " already has moved this turn.");
+            audioManager.Play("Imposible-attack-because " + owner.name + " already-has-moved-this-turn");
             return false;
         }
         if (owner.GetStamina() < staminaCost) {
-            Debug.Log("Imposible attack because " + owner.name + " doesn't have enough stamina, current stamina: " + owner.GetStamina() + ", required stamina: " + staminaCost);
+            audioManager.Play("Imposible-attack-because " + owner.name + " does-not-have-enough-stamina, current-stamina " + owner.GetStamina() + ", required-stamina " + staminaCost);
             return false;
         }
 
         int healthLost = target.ReduceHealth(effect);
         int staminaLost = owner.ReduceStamina(staminaCost);
         owner.moved = owner.isAlly;
-        Debug.Log(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points, current health is: " + target.GetHealth() + 
-                  (owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina points" : ""));
+        audioManager.Play(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points, current-health " + target.GetHealth() + 
+                  (owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina-points" : ""));
         if (target.IsDead()) {
-            Debug.Log(target.name + " is dead");
+            audioManager.Play(target.name + " is-dead");
         }
 
         return true;
     }
 
-    public void GetToast() {
-        Debug.Log(name + " effect: " + effect + ", stamina cost: " + staminaCost);
+    public void GetToast(AudioManager audioManager) {
+        audioManager.Play(name + " effect " + effect + ", stamina-cost " + staminaCost);
     }
 
 }

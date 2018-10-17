@@ -22,7 +22,7 @@ public static class SoundBank {
         if (audioDictionary.ContainsKey(clip)) {
             return audioDictionary[clip];
         }
-        Debug.Log("Failed to find sound " + clip);
+        Debug.LogWarning("The sound '" + clip + "' is missing.");
         return null;
     }
 

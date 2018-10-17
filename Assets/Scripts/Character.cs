@@ -53,11 +53,11 @@ public class Character {
         this.speed += Random.Range(0, speed + 1);
     }
 
-    public void GetToast(string previous = "") {
+    public void GetToast(AudioManager audioManager) {
         if(IsDead()) {
-            Debug.Log(previous + name + " is dead");
+            audioManager.Play(name + " is-dead");
         } else {
-            Debug.Log(previous + name + ", health: " + currentHealth + (currentStamina < 0 ? "" : ", stamina: " + currentStamina));
+            audioManager.Play(name + ", health " + currentHealth + (currentStamina < 0 ? "" : ", stamina " + currentStamina));
         }
     }
 
@@ -171,7 +171,7 @@ public class Character {
         if(maxStamina != -1) {
             currentStamina = Mathf.Max(0, currentStamina -= expendStamina);
         }
-        return currentStamina - previousStamina;
+        return previousStamina - currentStamina;
     }
 
     public void RecoverStamina() {
@@ -187,7 +187,7 @@ public class Character {
     public int ReduceHealth(int healthLess) {
         int previousHealth = currentHealth;
         currentHealth = Mathf.Max(0, this.currentHealth -= healthLess);
-        return currentHealth - previousHealth;
+        return previousHealth - currentHealth;
     }
 
     public void RecoverHealth(int healthRecovered = 0) {

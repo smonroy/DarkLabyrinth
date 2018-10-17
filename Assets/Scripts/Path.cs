@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Path {
+    private AudioManager audioManager;
     public Room[] rooms;
     public Character[] allies;
     public int level;
 
 
-    public Path(int level, Character[] allies) {
+    public Path(int level, Character[] allies, AudioManager audioManager) {
+        this.audioManager = audioManager;
         this.level = level;
         this.allies = LevelsConfiguration.UpdateAllies(allies, this.level);
         this.rooms = LevelsConfiguration.GetRooms(level);
@@ -32,18 +34,18 @@ public class Path {
 
     public void GetToast(NumpadKey numpadKey) {
         if (isEmpty(numpadKey)) {
-            Debug.Log("is empty");
+            audioManager.Play("is-empty");
         }
         else {
             switch (numpadKey) {
-                case NumpadKey.TopKey: Debug.Log("Menu option"); break;
-                case NumpadKey.N1Key: allies[0].GetToast(); break;
-                case NumpadKey.N2Key: allies[1].GetToast(); break;
-                case NumpadKey.N3Key: allies[2].GetToast(); break;
+                case NumpadKey.TopKey: audioManager.Play("menu-option"); break;
+                case NumpadKey.N1Key: allies[0].GetToast(audioManager); break;
+                case NumpadKey.N2Key: allies[1].GetToast(audioManager); break;
+                case NumpadKey.N3Key: allies[2].GetToast(audioManager); break;
                 case NumpadKey.N5Key: LevelDescription(); break;
-                case NumpadKey.N7Key: rooms[0].GetToast(); break;
-                case NumpadKey.N8Key: rooms[1].GetToast(); break;
-                case NumpadKey.N9Key: rooms[2].GetToast(); break;
+                case NumpadKey.N7Key: rooms[0].GetToast(audioManager); break;
+                case NumpadKey.N8Key: rooms[1].GetToast(audioManager); break;
+                case NumpadKey.N9Key: rooms[2].GetToast(audioManager); break;
             }
         }
     }
@@ -68,7 +70,7 @@ public class Path {
                 }
             }
         }
-        Debug.Log("Level " + level + ", there are " + roomNum + " possible paths, " + roomExplored + " of them have been explored");
+        audioManager.Play("level " + level + ", there-are " + roomNum + " possible-paths, " + roomExplored + " of-them-have-been-explored");
     }
 
 }

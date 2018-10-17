@@ -44,8 +44,8 @@ public class GameController : MonoBehaviour {
         }
         sequenceKeys = new Queue<NumpadKey>();
         sequenceType = new Queue<KeyType>();
-        menu = new Menu();
-        Debug.Log("Welcome to the game");
+        menu = new Menu(audioManager);
+        audioManager.Play("game-introduction", "Welcome to the game");
         ChangeMode(Mode.Menu);
 
     }
@@ -184,21 +184,22 @@ public class GameController : MonoBehaviour {
     }
 
     private void DoAction(GameActions action) {
+        audioManager.Interrupt();
         switch (action) {
             case GameActions.GoToMenu:
                 menu.previousMode = mode;
                 ChangeMode(Mode.Menu);
                 break;
             case GameActions.NewGame:
-                Debug.Log("You are started a new game");
+                audioManager.Play("new-game-started");
                 level = 1;
                 allies = new Character[3];
-                path = new Path(this.level, allies);
+                path = new Path(this.level, allies, audioManager);
                 ChangeMode(Mode.Path);
                 break;
             case GameActions.ResumeGame:
                 if (menu.previousMode != Mode.Menu) {
-                    Debug.Log("You returned to the previous game");
+                    audioManager.Play("previous-game-resumed");
                     ChangeMode(menu.previousMode);
                 }
                 break;
@@ -210,21 +211,21 @@ public class GameController : MonoBehaviour {
             case GameActions.AttackEnemy:
                 battle.AttackEnemy(sequenceKeys.ToArray());
                 if (battle.isTeamDied(battle.allies)) {
-                    Debug.Log("You lost");
+                    audioManager.Play("game-over");
                     menu.previousMode = Mode.Menu; // No game resume any more
                     ChangeMode(Mode.Menu);
                     return;
                 } 
                 if (battle.isTeamDied(battle.enemies)) {
-                    Debug.Log("All the enemies are defeated!");
+                    audioManager.Play("all-enemies-are-defeated");
                     this.allies = battle.allies;
                     if(roomSelected.isOpen()) {
                         level++;
-                        path = new Path(this.level, this.allies);
+                        path = new Path(this.level, this.allies, audioManager);
                     }
                     else {
                         roomSelected.Explore();
-                        Debug.Log("There is no exit in this path, you need to return to the same level");
+                        audioManager.Play("no-path", "There is no exit in this path, you need to return to the same level");
                     }
                     battle.ResetAllies();
                     ChangeMode(Mode.Path);
@@ -240,15 +241,15 @@ public class GameController : MonoBehaviour {
         switch (mode) {
             case Mode.Battle:
                 modeLabel.text = "Battle Mode";
-                Debug.Log("You are in battle now");
+                audioManager.Play("you-are-in-a-battle");
                 break;
             case Mode.Menu:
                 modeLabel.text = "Menu Mode";
-                Debug.Log("You are in the menu now");
+                audioManager.Play("you-are-in-the-menu");
                 break;
             case Mode.Path:
                 modeLabel.text = "Path Selection Mode";
-                Debug.Log("You are in the level " + level);
+                audioManager.Play("you-are-in-the-level " + level);
                 break;
         }
         validSequences = KeyboardConfiguration.GetValidSequences(mode);

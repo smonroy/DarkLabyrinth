@@ -33,7 +33,7 @@ public class Battle {
                 case NumpadKey.N9Key: enemy = enemies[2]; break;
             }
         }
-        if(weapon.Use(enemy)) {
+        if(weapon.Use(enemy, audioManager)) {
             if (TeamNothingToDo(allies)) {
                 ResetAlliesMoved();
                 EnemiesTurn();
@@ -47,7 +47,7 @@ public class Battle {
             if (enemy != null && !enemy.IsDead()) {
                 int weapon = Random.Range(0, enemy.actions.Length);
                 Character ally = Character.GetRandomCharacter(allies);
-                enemy.actions[weapon].Use(ally);
+                enemy.actions[weapon].Use(ally, audioManager);
                 if (isTeamDied(allies)) {
                     return;
                 }
@@ -123,21 +123,19 @@ public class Battle {
     public void GetToast(NumpadKey numpadKey) {
         Character newAllyToasted = null;
         if (isEmpty(numpadKey)) {
-            Debug.Log("is empty");
+            audioManager.Play("is-empty");
         } else {
-            audioManager.QueuePlay("confirm confirm", AudioPosition.Left);
-            audioManager.QueuePlay("heal1", AudioPosition.Right, false);
             switch (numpadKey) {
-                case NumpadKey.TopKey: Debug.Log("Menu option"); break;
-                case NumpadKey.N1Key: newAllyToasted = allies[0]; newAllyToasted.GetToast(); break;
-                case NumpadKey.N2Key: newAllyToasted = allies[1]; newAllyToasted.GetToast(); break;
-                case NumpadKey.N3Key: newAllyToasted = allies[2]; newAllyToasted.GetToast(); break;
-                case NumpadKey.N4Key: lastAllyToasted.actions[0].GetToast(); break;
-                case NumpadKey.N5Key: lastAllyToasted.actions[1].GetToast(); break;
-                case NumpadKey.N6Key: lastAllyToasted.actions[2].GetToast(); break;
-                case NumpadKey.N7Key: enemies[0].GetToast(); break;
-                case NumpadKey.N8Key: enemies[1].GetToast(); break;
-                case NumpadKey.N9Key: enemies[2].GetToast(); break;
+                case NumpadKey.TopKey: audioManager.Play("menu-option"); break;
+                case NumpadKey.N1Key: newAllyToasted = allies[0]; newAllyToasted.GetToast(audioManager); break;
+                case NumpadKey.N2Key: newAllyToasted = allies[1]; newAllyToasted.GetToast(audioManager); break;
+                case NumpadKey.N3Key: newAllyToasted = allies[2]; newAllyToasted.GetToast(audioManager); break;
+                case NumpadKey.N4Key: lastAllyToasted.actions[0].GetToast(audioManager); break;
+                case NumpadKey.N5Key: lastAllyToasted.actions[1].GetToast(audioManager); break;
+                case NumpadKey.N6Key: lastAllyToasted.actions[2].GetToast(audioManager); break;
+                case NumpadKey.N7Key: enemies[0].GetToast(audioManager); break;
+                case NumpadKey.N8Key: enemies[1].GetToast(audioManager); break;
+                case NumpadKey.N9Key: enemies[2].GetToast(audioManager); break;
             }
         }
         lastAllyToasted = newAllyToasted;

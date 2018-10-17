@@ -49,15 +49,15 @@ public class AudioManager : MonoBehaviour {
 
     #endregion
 
-    public void Load() {
+    void Load() {
         SoundBank.LoadAudioDictionary();
-        foreach (KeyValuePair<string, AudioClip> keyValuePair in SoundBank.audioDictionary) {
-            centerAudioSource.clip = keyValuePair.Value;
-            centerAudioSource.Play();
-        }
+        //foreach (KeyValuePair<string, AudioClip> keyValuePair in SoundBank.audioDictionary) {
+        //    centerAudioSource.clip = keyValuePair.Value;
+        //    centerAudioSource.Play();
+        //}
     }
 
-    void Start() {
+    void Awake() {
         Position = AudioPosition.Center;
         lastPositionQueued = Position;
         Load();
@@ -100,11 +100,13 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
-    public void QueuePlay(string clips, AudioPosition pos = AudioPosition.Center, bool interrupt = true) {
-        if (interrupt) {
-            audioQueue.Clear();
-            source.Stop();
+    public void Play(string clips, string message = "", bool interrupt = false, AudioPosition pos = AudioPosition.Center) {
+        if(message != "") {
+            Debug.Log(message);
+        } else {
+            Debug.Log(clips.Replace("-", " "));
         }
+        if (interrupt) Interrupt();
         if(lastPositionQueued != pos) {
             switch (pos) {
                 case AudioPosition.Center: audioQueue.Enqueue("[center]"); break;
@@ -115,7 +117,7 @@ public class AudioManager : MonoBehaviour {
             lastPositionQueued = pos;
         }
         List<string> playable = new List<string>(clips.Split(','));
-        foreach (string s in playable) SplitSpaces(s);
+        foreach (string s in playable) SplitSpaces(s.Trim());
     }
 
     void SplitSpaces(string s) {
@@ -134,26 +136,32 @@ public class AudioManager : MonoBehaviour {
     }
 
     void ReadNumbers(int val) {
-        if (val <= 20) {
-            audioQueue.Enqueue(val.ToString());
+        string valstring = val.ToString();
+        string tens, units;
+        if (valstring.Length == 3) {
+            string hundreds = valstring.Substring(0, 1) + "00";
+            audioQueue.Enqueue(hundreds);
+            valstring = valstring.Substring(1, 2);
+            val = val % 100;
         }
-        else {
-            string valstring = val.ToString();
-            string tens, units;
-            if (valstring.Length == 3) {
-                string hundreds = valstring.Substring(0, 1) + "00";
-                tens = valstring.Substring(1, 1) + "0";
-                units = valstring.Substring(2, 1);
-                audioQueue.Enqueue(hundreds);
-            }
-            else {
+        if (val > 0) {
+            valstring = val.ToString();
+            if (val <= 20) {
+                audioQueue.Enqueue(valstring);
+            } else {
                 tens = valstring.Substring(0, 1) + "0";
                 units = valstring.Substring(1, 1);
+                audioQueue.Enqueue(tens);
+                if (units != "0") {
+                    audioQueue.Enqueue(units);
+                }
             }
-            audioQueue.Enqueue(tens);
-            audioQueue.Enqueue(units);
         }
         audioQueue.Enqueue("[space]");
     }
 
+    public void Interrupt() {
+        audioQueue.Clear();
+        source.Stop();
+    }
 }
