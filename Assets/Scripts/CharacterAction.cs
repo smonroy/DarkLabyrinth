@@ -25,7 +25,7 @@ public class CharacterAction {
         this.modifierTurns = turns;
     }
 
-    public bool Use(Character target, AudioManager audioManager) {
+    public bool Use(Character target, AudioManager audioManager, Character defender = null) {
         if (target.IsDead()) {
             audioManager.Play("Imposible-attack-because " + target.name + " is-dead");
             return false;
@@ -39,13 +39,42 @@ public class CharacterAction {
             return false;
         }
 
-        int healthLost = target.ReduceHealth(effect);
+        int probability = Mathf.Clamp(50 + owner.GetSpeed() - target.GetSpeed(), 10, 90);
         int staminaLost = owner.ReduceStamina(staminaCost);
+        if (Random.Range(1, 101) > probability) {
+            audioManager.Play(owner.name + " failed-to-attack " + target.name);
+            return false;
+        }
+
+        int damage = 0;
+        if (effectType == EffectType.MeleeAttack) {
+            damage = Mathf.Max(this.effect, owner.GetAttack());
+        }
+        if (effectType == EffectType.MagicAttack) {
+            damage = Mathf.Max(this.effect, owner.GetMagic());
+        }
+
+        int defenderHealthLost = 0;
+        if (defender != null) {
+            defenderHealthLost = defender.ReduceHealth(damage / 2);
+            damage -= defenderHealthLost;
+        }
+        int healthLost = target.ReduceHealth(damage);
+
         owner.moved = owner.isAlly;
-        audioManager.Play(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points, current-health " + target.GetHealth() + 
+        audioManager.Play(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health-points, current-health " + target.GetHealth() +
                   (owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina-points" : ""));
+
         if (target.IsDead()) {
             audioManager.Play(target.name + " is-dead");
+        }
+
+        if (defender != null) {
+            audioManager.Play(defender.name + " defends " + target.name + " and-absorbs-part-of-the-damage " + defenderHealthLost);
+            if (defender.IsDead()) {
+                audioManager.Play(defender.name + " is-dead");
+            }
+            defender.defending = false;
         }
 
         return true;

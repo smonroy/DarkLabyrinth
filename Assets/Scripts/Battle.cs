@@ -38,10 +38,22 @@ public class Battle {
         }
     }
 
+
+    private Character GetDefender(Character allyAttacked) {
+        Character defender = null;
+        foreach (Character ally in allies) {
+            if (ally != null && ally != allyAttacked && ally.defending) {
+                defender = ally;
+            }
+        }
+        return defender;
+    }
+
     private void TryEnemiesTurn(){
         if (TeamNothingToDo(allies)) {
             ResetAlliesMoved();
             EnemiesTurn();
+            ResetAlliesDefense();
             RecoverAllies();
         }
     }
@@ -51,7 +63,7 @@ public class Battle {
             if (enemy != null && !enemy.IsDead()) {
                 int weapon = Random.Range(0, enemy.actions.Length);
                 Character ally = Character.GetRandomCharacter(allies);
-                enemy.actions[weapon].Use(ally, audioManager);
+                enemy.actions[weapon].Use(ally, audioManager, GetDefender(ally));
                 if (isTeamDied(allies)) {
                     return;
                 }
@@ -100,6 +112,14 @@ public class Battle {
         }
     }
 
+    private void ResetAlliesDefense() {
+        foreach (Character ally in allies) {
+            if (ally != null && ally.defending) {
+                ally.defending = false;
+            }
+        }
+    }
+
     public void RecoverAllies() {
         foreach (Character ally in allies) {
             if (ally != null) {
@@ -109,18 +129,46 @@ public class Battle {
         }
     }
 
-    public void RecoverAlly(NumpadKey numpadKey) {
+    private Character GetAlly(NumpadKey numpadKey) {
         Character ally = null;
         switch (numpadKey) {
             case NumpadKey.N1Key: ally = allies[0]; break;
             case NumpadKey.N2Key: ally = allies[1]; break;
             case NumpadKey.N3Key: ally = allies[2]; break;
         }
+        return ally;
+    }
+
+    public void RecoverAlly(NumpadKey numpadKey) {
+        Character ally = GetAlly(numpadKey);
         ally.RecoverHealth(Random.Range(5, 11));
         ally.RecoverStamina();
         ally.moved = ally.isAlly;
         audioManager.Play(ally.name + " recovered-some-health-and-stamina");
         TryEnemiesTurn();
+    }
+
+    public void DefendAllies(NumpadKey numpadKey)
+    {
+        if(CountActiveAllies() >= 2) {
+            Character ally = GetAlly(numpadKey);
+            ally.defending = true;
+            ally.moved = ally.isAlly;
+            audioManager.Play(ally.name + " will-defend-the-full-party");
+            TryEnemiesTurn();
+        } else {
+            audioManager.Play("there-is-no-one-to-defend");
+        }
+    }
+
+    private int CountActiveAllies() {
+        int active = 0;
+        foreach (Character ally in allies) {
+            if(ally != null && !ally.IsDead()) {
+                active++;
+            }
+        }
+        return active;
     }
 
     public bool isEmpty(NumpadKey numpadKey) {
@@ -155,6 +203,7 @@ public class Battle {
                 case NumpadKey.N7Key: enemies[0].GetToast(audioManager); break;
                 case NumpadKey.N8Key: enemies[1].GetToast(audioManager); break;
                 case NumpadKey.N9Key: enemies[2].GetToast(audioManager); break;
+                case NumpadKey.Period: audioManager.Play("defense-option"); break;
             }
         }
         lastAllyToasted = newAllyToasted;

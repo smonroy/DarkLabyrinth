@@ -233,6 +233,9 @@ public class GameController : MonoBehaviour {
             case GameActions.Recovering:
                 battle.RecoverAlly(sequenceKeys.ToArray()[0]);
                 break;
+            case GameActions.DeffendAllies:
+                battle.DefendAllies(sequenceKeys.ToArray()[0]);
+                break;
         }
     }
 
