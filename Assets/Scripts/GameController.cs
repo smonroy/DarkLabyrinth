@@ -47,7 +47,6 @@ public class GameController : MonoBehaviour {
         menu = new Menu(audioManager);
         audioManager.Play("game-introduction", "Welcome to the game");
         ChangeMode(Mode.Menu);
-
     }
 
     // Update is called once per frame
