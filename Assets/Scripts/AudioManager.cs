@@ -22,6 +22,7 @@ public class AudioManager : MonoBehaviour {
     Queue<string> audioQueue;
     AudioPosition lastPositionQueued;
     AudioPosition position;
+    bool lowPriority;           // if the clip is low priority any other not low-priority clip can interrupt it automatically
 
     private AudioPosition Position {
         get { return position; }
@@ -60,6 +61,7 @@ public class AudioManager : MonoBehaviour {
     void Awake() {
         Position = AudioPosition.Center;
         lastPositionQueued = Position;
+        lowPriority = false;
         Load();
         audioQueue = new Queue<string>();
         StartCoroutine(PlayQueue());
@@ -67,7 +69,20 @@ public class AudioManager : MonoBehaviour {
 
     IEnumerator PlayQueue() {
         while (true) {
-            if (audioQueue.Count != 0 && !source.isPlaying) {
+            bool areThereClipsHighPriority = false; 
+            foreach (string clip in audioQueue.ToArray()) {
+                if (clip.Substring(0, 1) != "[") {
+                    if (clip.Substring(0, 1) != "*") {
+                        areThereClipsHighPriority = true;
+                        break;
+                    }
+                }
+            }
+
+            if (audioQueue.Count != 0 && (!source.isPlaying || (lowPriority && areThereClipsHighPriority))) {
+                if(source.isPlaying) {
+                    source.Stop();
+                }
                 string nextSound = audioQueue.Dequeue();
                 switch (nextSound) {
                     case "[front]": Position = AudioPosition.Front; break;
@@ -76,16 +91,31 @@ public class AudioManager : MonoBehaviour {
                     case "[center]": Position = AudioPosition.Center; break;
                     case "[space]": yield return new WaitForSeconds(0.2f); break;
                     default:
+                        lowPriority = (nextSound.Substring(0, 1) == "*"); // if the clip is low priority any other not low-priority clip can interrupt it automatically
+                        if (lowPriority) { 
+                            nextSound = nextSound.Substring(1);
+                        } 
                         source.clip = SoundBank.GetSound(nextSound);
                         if (source.clip != null){
                             source.Play();
-                            yield return new WaitForSeconds(source.clip.length);
+                            //if (!lowPriority) {
+                            //    yield return new WaitForSeconds(source.clip.length);
+                            //}
                         }
                         break;
                 }
             }
             yield return null;
         }
+    }
+
+    private string GetNextClipString() {
+        foreach(string clip in audioQueue.ToArray()) {
+            if(clip.Substring(0,1) != "[") {
+                return clip;
+            }
+        }
+        return null;
     }
 
     void PlayBGM(string clip) {
@@ -101,10 +131,11 @@ public class AudioManager : MonoBehaviour {
     }
 
     public void Play(string clips, string message = "", bool interrupt = false, AudioPosition pos = AudioPosition.Center) {
+        bool lowP = false;
         if(message != "") {
             Debug.Log(message);
         } else {
-            Debug.Log(clips.Replace("-", " "));
+            Debug.Log(clips.Replace("-", " ").Replace("_","").Replace("*",""));
         }
         if (interrupt) Interrupt();
         if(lastPositionQueued != pos) {
@@ -116,44 +147,47 @@ public class AudioManager : MonoBehaviour {
             }
             lastPositionQueued = pos;
         }
+        lowP = (clips.Substring(0, 1) == "*");
+        if(lowP) clips = clips.Substring(1);
+
         List<string> playable = new List<string>(clips.Split(','));
-        foreach (string s in playable) SplitSpaces(s.Trim());
+        foreach (string s in playable) SplitSpaces(s.Trim(), lowP);
     }
 
-    void SplitSpaces(string s) {
+    void SplitSpaces(string s, bool lowP) {
         List<string> thing = new List<string>(s.Split(' '));
         foreach (string s1 in thing) {
             int val;
             if (Int32.TryParse(s1, out val)) {
-                ReadNumbers(val);
+                ReadNumbers(val, lowP);
             }
             else {
-                audioQueue.Enqueue(s1);
+                audioQueue.Enqueue((lowP ? "*": "") + s1);
                 audioQueue.Enqueue("[space]");
             }
         }
         audioQueue.Enqueue("[space]");
     }
 
-    void ReadNumbers(int val) {
+    void ReadNumbers(int val, bool lowP) {
         string valstring = val.ToString();
         string tens, units;
         if (valstring.Length == 3) {
             string hundreds = valstring.Substring(0, 1) + "00";
-            audioQueue.Enqueue(hundreds);
+            audioQueue.Enqueue((lowP ? "*" : "") + hundreds);
             valstring = valstring.Substring(1, 2);
             val = val % 100;
         }
         if (val > 0) {
             valstring = val.ToString();
             if (val <= 20) {
-                audioQueue.Enqueue(valstring);
+                audioQueue.Enqueue((lowP ? "*" : "") + valstring);
             } else {
                 tens = valstring.Substring(0, 1) + "0";
                 units = valstring.Substring(1, 1);
-                audioQueue.Enqueue(tens);
+                audioQueue.Enqueue((lowP ? "*" : "") + tens);
                 if (units != "0") {
-                    audioQueue.Enqueue(units);
+                    audioQueue.Enqueue((lowP ? "*" : "") + units);
                 }
             }
         }

@@ -200,12 +200,12 @@ public static class LevelsConfiguration {
                 scottyActions[2] = new CharacterAction("Super-Sword", 20, 1, 20, EffectType.MeleeAttack);
                 allies[0].SetActions(scottyActions);
 
-                allies[1] = new Character("Dog", 20, 8, 10, 0, 40, 40, 5);
+                allies[2] = new Character("Dog", 20, 8, 10, 0, 40, 40, 5);
                 CharacterAction[] dogActions = new CharacterAction[3];
                 dogActions[0] = new CharacterAction("Bites", 8, 2, 10, EffectType.MeleeAttack);
                 dogActions[1] = new CharacterAction("Magic-bark", 10, 1, 15, EffectType.MagicAttack);
                 dogActions[2] = null;
-                allies[1].SetActions(dogActions);
+                allies[2].SetActions(dogActions);
                 break;
         }
         return allies;
