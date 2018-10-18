@@ -16,16 +16,27 @@ public static class LevelsConfiguration {
         int p = Random.Range(1, 101);
         switch (level) {
             case 1:
-                rooms[0] = new Room(false, GetEnemies(1));
-                rooms[1] = new Room(true, GetEnemies(1));
-                rooms[2] = new Room(false, GetEnemies(1));
+            case 12:
+                rooms[1] = new Room(true, GetEnemies(level));
                 break;
             case 2:
-                rooms[i % 3] = new Room(true, GetEnemies(2));
-                break;
             case 3:
-                rooms[i % 3] = new Room(p < 40, GetEnemies(3, Difficulty.Easy)); i += ii;
-                rooms[i % 3] = new Room(p >= 40, GetEnemies(3, Difficulty.Medium));
+                rooms[i % 3] = new Room(true, GetEnemies(level));
+                break;
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+                rooms[i % 3] = new Room(p < 40, GetEnemies(level, Difficulty.Easy)); i += ii;
+                rooms[i % 3] = new Room(p >= 40, GetEnemies(level, Difficulty.Medium));
+                break;
+            case 11:
+                rooms[i % 3] = new Room(p < 23, GetEnemies(level, Difficulty.Easy)); i += ii;
+                rooms[i % 3] = new Room(p >= 23 && p < 57, GetEnemies(level, Difficulty.Medium)); i += ii;
+                rooms[i % 3] = new Room(p >= 57, GetEnemies(level, Difficulty.Hard));
                 break;
         }
         return rooms;
@@ -48,30 +59,131 @@ public static class LevelsConfiguration {
         int ii = (Random.Range(0, 2) * 2) - 1; // +1 or -1
         switch (enemySet) {
             case "1E":
-                enemies[i % 3] = GetEnemy("Slime1");
+                enemies[1] = GetEnemy("Slime1");
                 break;
             case "2E":
-                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
                 enemies[i % 3] = GetEnemy("Slime1");
                 break;
             case "3E":
-                enemies[i % 3] = GetEnemy("Slime1");
-                break;
-            case "3M":
                 enemies[i % 3] = GetEnemy("Slime1"); i += ii;
                 enemies[i % 3] = GetEnemy("Slime1");
                 break;
+            case "4E":
+                enemies[i % 3] = GetEnemy("Bee1");
+                break;
+            case "4M":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Slime1");
+                break;
+            case "5E":
+                enemies[i % 3] = GetEnemy("Bee1");
+                break;
+            case "5M":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bee1");
+                break;
+            case "6E":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Slime1");
+                break;
+            case "6M":
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Slime1");
+                break;
+            case "7E":
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Wolf1");
+                break;
+            case "7M":
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bee1");
+                break;
+            case "8E":
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bee1");
+                break;
+            case "8M":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Wolf1");
+                break;
+            case "9E":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Wolf1");
+                break;
+            case "9M":
+                enemies[i % 3] = GetEnemy("Bear1");
+                break;
+            case "10E":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bear1");
+                break;
+            case "10M":
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bear1");
+                break;
+            case "11E":
+                enemies[i % 3] = GetEnemy("Slime1"); i += ii;
+                enemies[i % 3] = GetEnemy("Wolf1"); i += ii;
+                enemies[i % 3] = GetEnemy("Wolf1");
+                break;
+            case "11M":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Wolf1"); i += ii;
+                enemies[i % 3] = GetEnemy("Wolf1");
+                break;
+            case "11H":
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bee1"); i += ii;
+                enemies[i % 3] = GetEnemy("Bear1");
+                break;
+            case "12E":
+                enemies[1] = GetEnemy("Orc");
+                break;
+
         }
         return enemies;
     }
 
     private static Character GetEnemy(string code) {
         Character enemy = null;
+        CharacterAction[] actions = null;
         switch (code) {
             case "Slime1":
-                enemy = new Character("Slime", 20, 5, 10, 5, 10);
-                enemy.IncreaseStatsRandomly(5, 5, 0, 5, 10);
-                enemy.SetAction(new CharacterAction("Squish", 0, 1, 2, EffectType.MeleeAttack));
+                enemy = new Character("Slime", 20, 5, 10, 0, 10);
+                enemy.IncreaseStatsRandomly(5, 5, 0, 0, 10);
+                actions = new CharacterAction[2];
+                actions[0] = new CharacterAction("Squish", 0, 1, 5, EffectType.MeleeAttack);
+                actions[1] = new CharacterAction("Spittle", 0, 1, 10, EffectType.MagicAttack);
+                enemy.SetActions(actions);
+                break;
+            case "Bee1":
+                enemy = new Character("Killer-bee", 20, 10, 5, 0, 10);
+                enemy.IncreaseStatsRandomly(15, 0, 5, 0, 10);
+                actions = new CharacterAction[2];
+                actions[0] = new CharacterAction("Sting", 0, 1, 10, EffectType.MeleeAttack);
+                actions[1] = new CharacterAction("Magic-pollen", 0, 1, 5, EffectType.MagicAttack);
+                enemy.SetActions(actions);
+                break;
+            case "Wolf1":
+                enemy = new Character("Wolf", 25, 10, 0, 0, 15);
+                enemy.IncreaseStatsRandomly(15, 5, 0, 0, 10);
+                enemy.SetAction(new CharacterAction("Bites", 0, 1, 12, EffectType.MeleeAttack));
+                break;
+            case "Bear1":
+                enemy = new Character("Bear", 40, 10, 0, 0, 5);
+                enemy.IncreaseStatsRandomly(15, 5, 0, 0, 10);
+                enemy.SetAction(new CharacterAction("Claw", 0, 1, 17, EffectType.MeleeAttack));
+                break;
+            case "Orc":
+                enemy = new Character("Orc", 80, 25, 15, 0, 20);
+                actions[0] = new CharacterAction("Claw", 0, 1, 25, EffectType.MeleeAttack);
+                actions[1] = new CharacterAction("Magic-roar", 0, 1, 15, EffectType.MagicAttack);
+                enemy.SetActions(actions);
                 break;
         }
         return enemy;
