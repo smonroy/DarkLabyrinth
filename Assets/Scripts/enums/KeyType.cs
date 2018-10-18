@@ -1,10 +1,14 @@
 ﻿public enum KeyType { 
     Ally, 
-    TargectedAction,
-    UntargetedAction, 
+    CharacterAction,
+    DeffendAction,
+    RecoveringAction,
     Enemy,
     Confirmation, 
     ExtraInformation, 
     Menu, 
-    StartNewGame,
+    MenuOptionNewGame,
+    MenuOptionResumeGame,
+    RoomSelection,
+    Exploration,
 }
