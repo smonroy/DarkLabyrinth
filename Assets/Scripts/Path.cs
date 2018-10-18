@@ -39,13 +39,13 @@ public class Path {
         else {
             switch (numpadKey) {
                 case NumpadKey.TopKey: audioManager.Play("menu-option"); break;
-                case NumpadKey.N1Key: allies[0].GetToast(audioManager); break;
-                case NumpadKey.N2Key: allies[1].GetToast(audioManager); break;
-                case NumpadKey.N3Key: allies[2].GetToast(audioManager); break;
+                case NumpadKey.N1Key: allies[0].GetToast(audioManager, AudioPosition.Left); break;
+                case NumpadKey.N2Key: allies[1].GetToast(audioManager, AudioPosition.Center); break;
+                case NumpadKey.N3Key: allies[2].GetToast(audioManager, AudioPosition.Right); break;
                 case NumpadKey.N5Key: LevelDescription(); break;
-                case NumpadKey.N7Key: rooms[0].GetToast(audioManager); break;
-                case NumpadKey.N8Key: rooms[1].GetToast(audioManager); break;
-                case NumpadKey.N9Key: rooms[2].GetToast(audioManager); break;
+                case NumpadKey.N7Key: rooms[0].GetToast(audioManager, AudioPosition.Left); break;
+                case NumpadKey.N8Key: rooms[1].GetToast(audioManager, AudioPosition.Center); break;
+                case NumpadKey.N9Key: rooms[2].GetToast(audioManager, AudioPosition.Right); break;
             }
         }
     }

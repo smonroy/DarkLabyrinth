@@ -172,12 +172,12 @@ public static class LevelsConfiguration {
             case "Wolf1":
                 enemy = new Character("Wolf", 25, 10, 0, 0, 15);
                 enemy.IncreaseStatsRandomly(15, 5, 0, 0, 10);
-                enemy.SetAction(new CharacterAction("Bites", 0, 1, 12, EffectType.MeleeAttack));
+                enemy.SetAction(new CharacterAction("Bites", 0, 1, 10, EffectType.MeleeAttack));
                 break;
             case "Bear1":
                 enemy = new Character("Bear", 40, 10, 0, 0, 5);
                 enemy.IncreaseStatsRandomly(15, 5, 0, 0, 10);
-                enemy.SetAction(new CharacterAction("Claw", 0, 1, 17, EffectType.MeleeAttack));
+                enemy.SetAction(new CharacterAction("Claw", 0, 1, 10, EffectType.MeleeAttack));
                 break;
             case "Orc":
                 enemy = new Character("Orc", 80, 25, 15, 0, 20);
@@ -193,19 +193,19 @@ public static class LevelsConfiguration {
     public static Character[] UpdateAllies(Character[] allies, int level) {
         switch (level) {
             case 1:
-                allies[0] = new Character("Scotty", 70, 10, 2, 15, 20, 80, 8);
+                allies[0] = new Character("Scotty", 70, 10, 8, 15, 20, 80, 8);
                 CharacterAction[] scottyActions = new CharacterAction[3];
                 scottyActions[0] = new CharacterAction("Knights-Knife", 10, 1, 15, EffectType.MeleeAttack);
                 scottyActions[1] = new CharacterAction("Shining-Slashes", 8, 2, 10, EffectType.MeleeAttack);
                 scottyActions[2] = new CharacterAction("Super-Sword", 20, 1, 20, EffectType.MeleeAttack);
                 allies[0].SetActions(scottyActions);
 
-                allies[1] = new Character("Dog", 20, 20, 2, 15, 50, 40, 4);
+                allies[2] = new Character("Dog", 20, 8, 10, 0, 40, 40, 5);
                 CharacterAction[] dogActions = new CharacterAction[3];
-                dogActions[0] = new CharacterAction("Claw", 10, 1, 15, EffectType.MeleeAttack);
-                dogActions[1] = new CharacterAction("Bites", 8, 2, 10, EffectType.MeleeAttack);
+                dogActions[0] = new CharacterAction("Bites", 8, 2, 10, EffectType.MeleeAttack);
+                dogActions[1] = new CharacterAction("Magic-bark", 10, 1, 15, EffectType.MagicAttack);
                 dogActions[2] = null;
-                allies[1].SetActions(dogActions);
+                allies[2].SetActions(dogActions);
                 break;
         }
         return allies;

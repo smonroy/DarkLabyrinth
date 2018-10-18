@@ -8,6 +8,7 @@ public class Character {
     public CharacterAction[] actions;
     public bool isAlly;
     public bool moved;
+    public bool defending;
 
     private int maxHealth;
     private int maxStamina;
@@ -34,6 +35,7 @@ public class Character {
         this.staminaRecovery = 0;
         this.modifiers = new List<Modifier>();
         this.moved = false;
+        this.defending = false;
     }
 
     public Character(string name, int health, int attack, int magic, int defense, int speed, int stamina, int staminaRecovery) 
@@ -53,11 +55,11 @@ public class Character {
         this.speed += Random.Range(0, speed + 1);
     }
 
-    public void GetToast(AudioManager audioManager) {
+    public void GetToast(AudioManager audioManager, AudioPosition position) {
         if(IsDead()) {
-            audioManager.Play(name + " is-dead");
+            audioManager.Play(name + " is-dead", "", true, position);
         } else {
-            audioManager.Play(name + ", health " + currentHealth + (currentStamina < 0 ? "" : ", stamina " + currentStamina));
+            audioManager.Play(name + ", health " + currentHealth + (currentStamina < 0 ? "" : ", stamina " + currentStamina),"",true, position);
         }
     }
 
@@ -192,7 +194,7 @@ public class Character {
 
     public void RecoverHealth(int healthRecovered = 0) {
         if(healthRecovered == 0) {
-            healthRecovered = Random.Range(0, 3);
+            healthRecovered = Random.Range(0, 4);
         }
         currentHealth = Mathf.Min(maxHealth, currentHealth += healthRecovered);
     }

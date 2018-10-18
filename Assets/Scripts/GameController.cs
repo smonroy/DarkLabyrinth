@@ -45,7 +45,7 @@ public class GameController : MonoBehaviour {
         sequenceKeys = new Queue<NumpadKey>();
         sequenceType = new Queue<KeyType>();
         menu = new Menu(audioManager);
-        audioManager.Play("game-introduction", "Welcome to the game");
+        audioManager.Play("*game-introduction", "Welcome to the game");
         ChangeMode(Mode.Menu);
     }
 
@@ -190,7 +190,7 @@ public class GameController : MonoBehaviour {
                 ChangeMode(Mode.Menu);
                 break;
             case GameActions.NewGame:
-                audioManager.Play("new-game-started");
+                audioManager.Play("*new-game-started");
                 level = 1;
                 allies = new Character[3];
                 path = new Path(this.level, allies, audioManager);
@@ -230,6 +230,12 @@ public class GameController : MonoBehaviour {
                     ChangeMode(Mode.Path);
                 }
                 break;
+            case GameActions.Recovering:
+                battle.RecoverAlly(sequenceKeys.ToArray()[0]);
+                break;
+            case GameActions.DeffendAllies:
+                battle.DefendAllies(sequenceKeys.ToArray()[0]);
+                break;
         }
     }
 
@@ -240,15 +246,15 @@ public class GameController : MonoBehaviour {
         switch (mode) {
             case Mode.Battle:
                 modeLabel.text = "Battle Mode";
-                audioManager.Play("you-are-in-a-battle");
+                audioManager.Play("*you-are-in-a-battle");
                 break;
             case Mode.Menu:
                 modeLabel.text = "Menu Mode";
-                audioManager.Play("you-are-in-the-menu");
+                audioManager.Play("*you-are-in-the-menu");
                 break;
             case Mode.Path:
                 modeLabel.text = "Path Selection Mode";
-                audioManager.Play("you-are-in-the-level " + level);
+                audioManager.Play("*you-are-in-the-level " + level);
                 break;
         }
         validSequences = KeyboardConfiguration.GetValidSequences(mode);

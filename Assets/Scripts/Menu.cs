@@ -22,7 +22,7 @@ public class Menu {
                 if(previousMode == Mode.Menu) {
                     audioManager.Play("there-is-no-game-to-resume");
                 } else {
-                    audioManager.Play("resume-game-option");
+                    audioManager.Play("resume", "resume game option");
                 }
                 break;
         }
