@@ -192,7 +192,7 @@ public class Character {
 
     public void RecoverHealth(int healthRecovered = 0) {
         if(healthRecovered == 0) {
-            healthRecovered = Random.Range(0, 3);
+            healthRecovered = Random.Range(0, 4);
         }
         currentHealth = Mathf.Min(maxHealth, currentHealth += healthRecovered);
     }

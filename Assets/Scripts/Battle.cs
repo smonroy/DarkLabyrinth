@@ -34,11 +34,15 @@ public class Battle {
             }
         }
         if(weapon.Use(enemy, audioManager)) {
-            if (TeamNothingToDo(allies)) {
-                ResetAlliesMoved();
-                EnemiesTurn();
-                RecoverAllies();
-            }
+            TryEnemiesTurn();
+        }
+    }
+
+    private void TryEnemiesTurn(){
+        if (TeamNothingToDo(allies)) {
+            ResetAlliesMoved();
+            EnemiesTurn();
+            RecoverAllies();
         }
     }
 
@@ -105,6 +109,20 @@ public class Battle {
         }
     }
 
+    public void RecoverAlly(NumpadKey numpadKey) {
+        Character ally = null;
+        switch (numpadKey) {
+            case NumpadKey.N1Key: ally = allies[0]; break;
+            case NumpadKey.N2Key: ally = allies[1]; break;
+            case NumpadKey.N3Key: ally = allies[2]; break;
+        }
+        ally.RecoverHealth(Random.Range(5, 11));
+        ally.RecoverStamina();
+        ally.moved = ally.isAlly;
+        audioManager.Play(ally.name + " recovered-some-health-and-stamina");
+        TryEnemiesTurn();
+    }
+
     public bool isEmpty(NumpadKey numpadKey) {
         switch (numpadKey) {
             case NumpadKey.N1Key: return allies[0] == null;
@@ -127,6 +145,7 @@ public class Battle {
         } else {
             switch (numpadKey) {
                 case NumpadKey.TopKey: audioManager.Play("menu-option"); break;
+                case NumpadKey.N0Key: audioManager.Play("recovering-option"); break;
                 case NumpadKey.N1Key: newAllyToasted = allies[0]; newAllyToasted.GetToast(audioManager); break;
                 case NumpadKey.N2Key: newAllyToasted = allies[1]; newAllyToasted.GetToast(audioManager); break;
                 case NumpadKey.N3Key: newAllyToasted = allies[2]; newAllyToasted.GetToast(audioManager); break;

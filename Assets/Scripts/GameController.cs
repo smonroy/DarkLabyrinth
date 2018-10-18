@@ -230,6 +230,9 @@ public class GameController : MonoBehaviour {
                     ChangeMode(Mode.Path);
                 }
                 break;
+            case GameActions.Recovering:
+                battle.RecoverAlly(sequenceKeys.ToArray()[0]);
+                break;
         }
     }
 
