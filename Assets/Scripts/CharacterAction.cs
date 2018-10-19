@@ -46,7 +46,7 @@ public class CharacterAction {
         int staminaLost = owner.ReduceStamina(staminaCost);
         if (Random.Range(1, 101) > probability) {
             audioManager.Play(owner.name + " failed-to-attack " + target.name);
-            return false;
+            return true;
         }
 
         int damage = 0;
