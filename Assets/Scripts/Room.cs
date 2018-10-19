@@ -31,9 +31,9 @@ public class Room {
 
     public void GetToast(AudioManager audioManager, AudioPosition position) {
         if(explored) {
-            audioManager.Play("this-path-have-beed-already-explored");
+            audioManager.Play("this-path-have-beed-already-explored","",true);
         } else {
-            audioManager.Play("you-peek-at-this-path");
+            audioManager.Play("you-peek-at-this-path", "", true);
             Character.GetRandomCharacter(enemies).GetToast(audioManager, position, false);
         }
     }

@@ -230,7 +230,7 @@ public class GameController : MonoBehaviour {
             return;
         }
         if (battle.isTeamDied(battle.enemies)) {
-            audioManager.Play("all-enemies-are-defeated");
+            audioManager.Play("all-enemies-are-defeated", "", true);
             this.allies = battle.allies;
             if (roomSelected.isOpen())
             {

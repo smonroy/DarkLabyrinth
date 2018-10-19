@@ -68,8 +68,9 @@ public class CharacterAction {
         }
         int healthLost = target.ReduceHealth(damage);
 
-        audioManager.Play(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points, current-health " + target.GetHealth() +
-                  (owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina-points" : ""));
+        //audioManager.Play(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points, current-health " + target.GetHealth() +
+                  //(owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina-points" : ""));
+        audioManager.Play(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " current-health " + target.GetHealth());
 
         if (target.IsDead()) {
             audioManager.Play(target.name + " is-dead");
