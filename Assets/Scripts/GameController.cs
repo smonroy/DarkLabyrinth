@@ -266,10 +266,11 @@ public class GameController : MonoBehaviour {
             case Mode.Path:
                 audioManager.PlayBGM("gameOverTheme");
                 modeLabel.text = "Path Selection Mode";
-                if(level == 13){
+                if (level == 13) {
                     audioManager.Play("end-demo", "", true);
+                } else {
+                    audioManager.Play("*you-are-in-the-level " + level);
                 }
-                audioManager.Play("*you-are-in-the-level " + level);
                 break;
         }
         validSequences = KeyboardConfiguration.GetValidSequences(mode);
