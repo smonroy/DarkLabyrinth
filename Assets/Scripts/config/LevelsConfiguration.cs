@@ -181,6 +181,7 @@ public static class LevelsConfiguration {
                 break;
             case "Orc":
                 enemy = new Character("Orc", 80, 25, 15, 0, 20);
+                actions = new CharacterAction[2];
                 actions[0] = new CharacterAction("Claw", 0, 1, 25, EffectType.MeleeAttack);
                 actions[1] = new CharacterAction("Magic-roar", 0, 1, 15, EffectType.MagicAttack);
                 enemy.SetActions(actions);
