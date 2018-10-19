@@ -55,11 +55,11 @@ public class Character {
         this.speed += Random.Range(0, speed + 1);
     }
 
-    public void GetToast(AudioManager audioManager, AudioPosition position) {
+    public void GetToast(AudioManager audioManager, AudioPosition position, bool interrupt = true) {
         if(IsDead()) {
             audioManager.Play(name + " is-dead", "", true, position);
         } else {
-            audioManager.Play(name + ", health " + currentHealth + (currentStamina < 0 ? "" : ", stamina " + currentStamina),"",true, position);
+            audioManager.Play("_" + name + " " + currentHealth + (currentStamina < 0 ? "" : ", stamina " + currentStamina),"", interrupt, position);
         }
     }
 

@@ -89,7 +89,7 @@ public class AudioManager : MonoBehaviour {
                     case "[left]": Position = AudioPosition.Left; ; break;
                     case "[right]": Position = AudioPosition.Right; break;
                     case "[center]": Position = AudioPosition.Center; break;
-                    case "[space]": yield return new WaitForSeconds(0.2f); break;
+                    case "[space]": yield return new WaitForSeconds(0.1f); break;
                     default:
                         lowPriority = (nextSound.Substring(0, 1) == "*"); // if the clip is low priority any other not low-priority clip can interrupt it automatically
                         if (lowPriority) { 

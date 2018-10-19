@@ -210,26 +210,6 @@ public class GameController : MonoBehaviour {
             case GameActions.AttackEnemy:
                 battle.AttackEnemy(sequenceKeys.ToArray());
                 TryFinishOfBattle();
-                //if (battle.isTeamDied(battle.allies)) {
-                //    audioManager.Play("game-over");
-                //    menu.previousMode = Mode.Menu; // No game resume any more
-                //    ChangeMode(Mode.Menu);
-                //    return;
-                //} 
-                //if (battle.isTeamDied(battle.enemies)) {
-                //    audioManager.Play("all-enemies-are-defeated");
-                //    this.allies = battle.allies;
-                //    if(roomSelected.isOpen()) {
-                //        level++;
-                //        path = new Path(this.level, this.allies, audioManager);
-                //    }
-                //    else {
-                //        roomSelected.Explore();
-                //        audioManager.Play("no-path", "There is no exit in this path, you need to return to the same level");
-                //    }
-                //    battle.ResetAllies();
-                //    ChangeMode(Mode.Path);
-                //}
                 break;
             case GameActions.Recovering:
                 battle.RecoverAlly(sequenceKeys.ToArray()[0]);
@@ -271,7 +251,12 @@ public class GameController : MonoBehaviour {
         switch (mode) {
             case Mode.Battle:
                 modeLabel.text = "Battle Mode";
-                audioManager.Play("*you-are-in-a-battle");
+                if(level == 1) {
+                    audioManager.Play("*you-are-in-a-battle");
+                } else {
+                    audioManager.Play("_you-are-in-a-battle");
+
+                }
                 break;
             case Mode.Menu:
                 modeLabel.text = "Menu Mode";

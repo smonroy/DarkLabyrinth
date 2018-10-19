@@ -34,7 +34,7 @@ public class Room {
             audioManager.Play("this-path-have-beed-already-explored");
         } else {
             audioManager.Play("you-peek-at-this-path");
-            Character.GetRandomCharacter(enemies).GetToast(audioManager, position);
+            Character.GetRandomCharacter(enemies).GetToast(audioManager, position, false);
         }
     }
 
