@@ -26,6 +26,10 @@ public class CharacterAction {
     }
 
     public bool Use(Character target, AudioManager audioManager, Character defender = null) {
+        if (owner.IsDead()) {
+            audioManager.Play("Imposible-attack-because " + owner.name + " is-dead");
+            return false;
+        }
         if (target.IsDead()) {
             audioManager.Play("Imposible-attack-because " + target.name + " is-dead");
             return false;
