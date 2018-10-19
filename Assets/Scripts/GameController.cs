@@ -266,6 +266,9 @@ public class GameController : MonoBehaviour {
             case Mode.Path:
                 audioManager.PlayBGM("gameOverTheme");
                 modeLabel.text = "Path Selection Mode";
+                if(level == 13){
+                    audioManager.Play("end-demo", "", true);
+                }
                 audioManager.Play("*you-are-in-the-level " + level);
                 break;
         }

@@ -194,7 +194,7 @@ public static class LevelsConfiguration {
     public static Character[] UpdateAllies(Character[] allies, int level) {
         switch (level) {
             case 1:
-                allies[0] = new Character("Scotty", 70, 10, 8, 15, 20, 80, 8);
+                allies[0] = new Character("Scotty", 70, 10, 8, 15, 30, 80, 8);
                 CharacterAction[] scottyActions = new CharacterAction[3];
                 scottyActions[0] = new CharacterAction("Knights-Knife", 10, 1, 15, EffectType.MeleeAttack);
                 scottyActions[1] = new CharacterAction("Shining-Slashes", 8, 2, 10, EffectType.MeleeAttack);
