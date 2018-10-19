@@ -118,7 +118,7 @@ public class AudioManager : MonoBehaviour {
         return null;
     }
 
-    void PlayBGM(string clip) {
+    public void PlayBGM(string clip) {
         StartCoroutine(PlayBGMCoroutine(clip));
     }
 
@@ -126,7 +126,11 @@ public class AudioManager : MonoBehaviour {
         musicAudioSource.clip = SoundBank.audioDictionary[clip];
         while (true) {
             if (!musicAudioSource.isPlaying) musicAudioSource.Play();
-            if (musicAudioSource.clip == null) StopCoroutine("PlayBGMCoroutine");
+            if (musicAudioSource.clip == null) {
+                musicAudioSource.Stop();
+                StopCoroutine("PlayBGMCoroutine");
+            }
+            yield return null;
         }
     }
 

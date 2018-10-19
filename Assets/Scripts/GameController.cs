@@ -250,19 +250,21 @@ public class GameController : MonoBehaviour {
         this.mode = mode;
         switch (mode) {
             case Mode.Battle:
+                audioManager.PlayBGM("battleTheme");
                 modeLabel.text = "Battle Mode";
                 if(level == 1) {
                     audioManager.Play("*you-are-in-a-battle");
                 } else {
                     audioManager.Play("_you-are-in-a-battle");
-
                 }
                 break;
             case Mode.Menu:
+                audioManager.PlayBGM("exploringTheme");
                 modeLabel.text = "Menu Mode";
                 audioManager.Play("*you-are-in-the-menu");
                 break;
             case Mode.Path:
+                audioManager.PlayBGM("gameOverTheme");
                 modeLabel.text = "Path Selection Mode";
                 audioManager.Play("*you-are-in-the-level " + level);
                 break;
