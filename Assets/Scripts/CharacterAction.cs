@@ -88,7 +88,7 @@ public class CharacterAction {
     }
 
     public void GetToast(AudioManager audioManager) {
-        audioManager.Play(name + " effect " + effect + ", stamina-cost " + staminaCost, "", true);
+        audioManager.Play("_" + name + " effect " + effect + ", stamina-cost " + staminaCost, "", true);
     }
 
 }
