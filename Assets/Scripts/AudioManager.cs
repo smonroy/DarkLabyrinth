@@ -18,8 +18,8 @@ public class AudioManager : MonoBehaviour {
 
     public AudioSource musicAudioSource;
 
-    AudioSource source;
-    Queue<string> audioQueue;
+    private AudioSource source;
+    public Queue<string> audioQueue;
     AudioPosition lastPositionQueued;
     AudioPosition position;
     bool lowPriority;           // if the clip is low priority any other not low-priority clip can interrupt it automatically

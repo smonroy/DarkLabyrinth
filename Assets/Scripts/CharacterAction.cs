@@ -47,7 +47,8 @@ public class CharacterAction {
         owner.moved = owner.isAlly;
 
         int probability = Mathf.Clamp(50 + owner.GetSpeed() - target.GetSpeed(), 40, 90);
-        int staminaLost = owner.ReduceStamina(staminaCost);
+        //int staminaLost = 
+        owner.ReduceStamina(staminaCost);
         if (Random.Range(1, 101) > probability) {
             audioManager.Play(owner.name + " failed-to-attack " + target.name);
             return true;
@@ -66,7 +67,8 @@ public class CharacterAction {
             defenderHealthLost = defender.ReduceHealth(damage / 2);
             damage -= defenderHealthLost;
         }
-        int healthLost = target.ReduceHealth(damage);
+        // int healthLost = 
+        target.ReduceHealth(damage);
 
         //audioManager.Play(owner.name + " attacks " + target.name + " with " + name + ", " + target.name + " lost " + healthLost + " health points, current-health " + target.GetHealth() +
                   //(owner.isAlly ? ", " + owner.name + " lost " + staminaLost + " stamina-points" : ""));

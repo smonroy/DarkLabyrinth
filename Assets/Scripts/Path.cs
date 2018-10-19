@@ -70,7 +70,8 @@ public class Path {
                 }
             }
         }
-        audioManager.Play("level " + level + ", there-are " + roomNum + " possible-paths, " + roomExplored + " of-them-have-been-explored" ,"", true);
+        // audioManager.Play("level " + level + ", there-are " + roomNum + " possible-paths, " + roomExplored + " of-them-have-been-explored" ,"", true);
+        audioManager.Play("level " + level + ", there-are " + roomNum + " possible-paths", "", true);
     }
 
 }

@@ -130,7 +130,7 @@ public class GameController : MonoBehaviour {
             keyMap[numpadKey].GetComponent<KeyController>().PressDown(valid && !complete);
         }
 
-        if(!complete || gameAction == GameActions.NoAction) {
+        if(!complete) {
             GetToast(numpadKey);
         }
         if (complete) {
@@ -218,6 +218,9 @@ public class GameController : MonoBehaviour {
             case GameActions.DeffendAllies:
                 battle.DefendAllies(sequenceKeys.ToArray()[0]);
                 TryFinishOfBattle();
+                break;
+            case GameActions.NoAction:
+                GetToast(sequenceKeys.ToArray()[0]);
                 break;
         }
     }
