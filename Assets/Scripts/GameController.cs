@@ -209,36 +209,61 @@ public class GameController : MonoBehaviour {
                 break;
             case GameActions.AttackEnemy:
                 battle.AttackEnemy(sequenceKeys.ToArray());
-                if (battle.isTeamDied(battle.allies)) {
-                    audioManager.Play("game-over");
-                    menu.previousMode = Mode.Menu; // No game resume any more
-                    ChangeMode(Mode.Menu);
-                    return;
-                } 
-                if (battle.isTeamDied(battle.enemies)) {
-                    audioManager.Play("all-enemies-are-defeated");
-                    this.allies = battle.allies;
-                    if(roomSelected.isOpen()) {
-                        level++;
-                        path = new Path(this.level, this.allies, audioManager);
-                    }
-                    else {
-                        roomSelected.Explore();
-                        audioManager.Play("no-path", "There is no exit in this path, you need to return to the same level");
-                    }
-                    battle.ResetAllies();
-                    ChangeMode(Mode.Path);
-                }
+                TryFinishOfBattle();
+                //if (battle.isTeamDied(battle.allies)) {
+                //    audioManager.Play("game-over");
+                //    menu.previousMode = Mode.Menu; // No game resume any more
+                //    ChangeMode(Mode.Menu);
+                //    return;
+                //} 
+                //if (battle.isTeamDied(battle.enemies)) {
+                //    audioManager.Play("all-enemies-are-defeated");
+                //    this.allies = battle.allies;
+                //    if(roomSelected.isOpen()) {
+                //        level++;
+                //        path = new Path(this.level, this.allies, audioManager);
+                //    }
+                //    else {
+                //        roomSelected.Explore();
+                //        audioManager.Play("no-path", "There is no exit in this path, you need to return to the same level");
+                //    }
+                //    battle.ResetAllies();
+                //    ChangeMode(Mode.Path);
+                //}
                 break;
             case GameActions.Recovering:
                 battle.RecoverAlly(sequenceKeys.ToArray()[0]);
+                TryFinishOfBattle();
                 break;
             case GameActions.DeffendAllies:
                 battle.DefendAllies(sequenceKeys.ToArray()[0]);
+                TryFinishOfBattle();
                 break;
         }
     }
 
+    private void TryFinishOfBattle(){
+        if (battle.isTeamDied(battle.allies)) {
+            audioManager.Play("game-over");
+            menu.previousMode = Mode.Menu; // No game resume any more
+            ChangeMode(Mode.Menu);
+            return;
+        }
+        if (battle.isTeamDied(battle.enemies)) {
+            audioManager.Play("all-enemies-are-defeated");
+            this.allies = battle.allies;
+            if (roomSelected.isOpen())
+            {
+                level++;
+                path = new Path(this.level, this.allies, audioManager);
+            } else {
+                roomSelected.Explore();
+                audioManager.Play("no-path", "There is no exit in this path, you need to return to the same level");
+            }
+            battle.ResetAllies();
+            ChangeMode(Mode.Path);
+        }
+    }
 
     public void ChangeMode(Mode mode)
     {

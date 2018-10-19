@@ -122,7 +122,7 @@ public class Battle {
 
     public void RecoverAllies() {
         foreach (Character ally in allies) {
-            if (ally != null) {
+            if (ally != null && !ally.IsDead()) {
                 ally.RecoverStamina();
                 ally.RecoverHealth();
             }
@@ -141,6 +141,14 @@ public class Battle {
 
     public void RecoverAlly(NumpadKey numpadKey) {
         Character ally = GetAlly(numpadKey);
+        if(ally.IsDead()) {
+            audioManager.Play(ally.name + " is-dead");
+            return;
+        }
+        if(ally.moved) {
+            audioManager.Play(ally.name + " already-has-moved-this-turn");
+            return;
+        }
         ally.RecoverHealth(Random.Range(5, 11));
         ally.RecoverStamina();
         ally.moved = ally.isAlly;
@@ -150,8 +158,17 @@ public class Battle {
 
     public void DefendAllies(NumpadKey numpadKey)
     {
-        if(CountActiveAllies() >= 2) {
-            Character ally = GetAlly(numpadKey);
+        Character ally = GetAlly(numpadKey);
+        if (ally.IsDead()){
+            audioManager.Play(ally.name + " is-dead");
+            return;
+        }
+        if (ally.moved){
+            audioManager.Play(ally.name + " already-has-moved-this-turn");
+            return;
+        }
+
+        if (CountActiveAllies() >= 2) {
             ally.defending = true;
             ally.moved = ally.isAlly;
             audioManager.Play(ally.name + " will-defend-the-full-party");
