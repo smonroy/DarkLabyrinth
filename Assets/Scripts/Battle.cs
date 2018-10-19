@@ -209,8 +209,8 @@ public class Battle {
             audioManager.Play("is-empty");
         } else {
             switch (numpadKey) {
-                case NumpadKey.TopKey: audioManager.Play("menu-option"); break;
-                case NumpadKey.N0Key: audioManager.Play("recovering-option"); break;
+                case NumpadKey.TopKey: audioManager.Play("menu-option", "", true); break;
+                case NumpadKey.N0Key: audioManager.Play("recovering-option", "", true); break;
                 case NumpadKey.N1Key: newAllyToasted = allies[0]; newAllyToasted.GetToast(audioManager, AudioPosition.Left); break;
                 case NumpadKey.N2Key: newAllyToasted = allies[1]; newAllyToasted.GetToast(audioManager, AudioPosition.Center); break;
                 case NumpadKey.N3Key: newAllyToasted = allies[2]; newAllyToasted.GetToast(audioManager, AudioPosition.Right); break;
@@ -220,7 +220,7 @@ public class Battle {
                 case NumpadKey.N7Key: enemies[0].GetToast(audioManager, AudioPosition.Left); break;
                 case NumpadKey.N8Key: enemies[1].GetToast(audioManager, AudioPosition.Center); break;
                 case NumpadKey.N9Key: enemies[2].GetToast(audioManager, AudioPosition.Right); break;
-                case NumpadKey.Period: audioManager.Play("defense-option"); break;
+                case NumpadKey.Period: audioManager.Play("defense-option", "", true); break;
             }
         }
         lastAllyToasted = newAllyToasted;
